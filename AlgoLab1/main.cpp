@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
     bool print = false;
 
     Parser parser;
-    Matrix c, d, product1, product2;
+    Matrix c, d, product;
     clock_t start, stop;
 
     for(int i = 1; i < argc; i++) {
@@ -167,18 +167,13 @@ int main(int argc, char* argv[])
     }
 
     start = clock();
-    product1 = StrassenMult(64, c, d);
+    product = StrassenMult(64, c, d);
     stop = clock();
     std::cout << double(stop - start) / CLOCKS_PER_SEC << std::endl;
 
-    c = parser.Read("/usagers/gwhud/Projects/AlgoLab1/tp1-donnees/ex_n5.1");
-    d = parser.Read("/usagers/gwhud/Projects/AlgoLab1/tp1-donnees/ex_n5.2");
-    start = clock();
-    product2 = StrassenMult(64, c, d);
-    stop = clock();
-
-    bool equality = product1 == product2;
-    std::cout << equality << std::endl;
+    if (print) {
+        product.Print();
+    }
 
     return 0;
 }
