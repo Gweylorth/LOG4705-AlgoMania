@@ -10,39 +10,62 @@
 
 using std::queue;
 
-vector<int> longuestChain(Graph& graph) {
-    vector<int> c, pred (graph.GetVertices(), -1);
-    vector<bool> visited (graph.GetVertices(), false);
-    queue<int> q;
+void longuestChains(Graph& graph, list< vector<int> >& chains) {
 
-    for (int v = 0; v < graph.GetVertices(); v++) {
+    if (graph.GetVertices().size() == 0) {
+        return;
+    }
+
+    vector<int> pred (graph.GetVertices().size(), -1);
+    vector<int> q; // use as a queue that can be iterated through
+
+    std::cout << "herp" << std::endl;
+
+    for (int& v : graph.GetVertices()) {
         std::cout << v << " in degree : " << graph.InDegree(v) << std::endl;
         if (graph.InDegree(v) == 0) {
-            q.push(v);
+            q.push_back(v);
         }
     }
+
+    std::cout << "derp" << std::endl;
 
     int last = -1;
 
     while (!q.empty()) {
         int u = q.back();
-        q.pop();
+        q.pop_back();
         for (auto& v : graph.adjacencies[u]) { // for each (u,v) axis
             pred[v] = u;
             last = v;
-            if (!visited[v]){
-                q.push(v);
-                visited[v] = true;
+            std::vector<int>::iterator it = std::find(q.begin(), q.end(), v);
+            if(it != q.end()) {
+                std::rotate(it, it + 1, q.end());
+                std::cout << "derp" << std::endl;
+
+            } else {
+                q.push_back(v);
             }
+
         }
     }
 
+    std::cout << "hurpa" << std::endl;
+
+    vector<int> c;
     while (last != -1) {
         c.push_back(last);
         last = pred[last];
     }
 
-    return c;
+    std::cout << "coin" << std::endl;
+    chains.push_back(c);
+    std::cout << "coincoin" << std::endl;
+    for (int& v : c) {
+        graph - v;
+    }
+
+    longuestChains(graph, chains);
 }
 
 int main()
@@ -55,15 +78,18 @@ int main()
 
     std::cout << "Graph size : " << graph.adjacencies.size() << std::endl;
 
-    vector<int> chain1 = longuestChain(graph);
+    list< vector<int> > chains;
+    longuestChains(graph, chains);
 
-    std::cout << "Greedy algorithm : (";
+    std::cout << "Greedy algorithm :" <<std::endl;
 
-    for (int& v : chain1) {
-        std::cout << v << ",";
+    for (auto& c : chains) {
+        std::cout << "(";
+        for (int& v : c) {
+            std::cout << v << ",";
+        }
+        std::cout << ")" << std::endl;
     }
-
-    std::cout << ")" << std::endl;
 
     return 0;
 }

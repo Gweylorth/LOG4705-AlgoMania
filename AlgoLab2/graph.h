@@ -15,14 +15,15 @@ using std::list;
 class Graph
 {
 private:
-    int vertices; // Vertices count in graph
+    vector<int> vertices; // Vertices in graph
     vector< pair <int, int> > axis; // Axis between vertices
 
 public:
     vector < list <int> > adjacencies; // holds, for one vertex, all adjacent vertices
 
     Graph(int, vector< pair <int, int> >&);
-    int GetVertices() {return this->vertices;}
+    void operator-(int); // removes a vertex from graph
+    vector<int>& GetVertices() {return this->vertices;}
     int InDegree(int);
 };
 
