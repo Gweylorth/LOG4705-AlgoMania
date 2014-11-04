@@ -1,4 +1,4 @@
-#include <queue>
+#include <map>
 #include "graph.h"
 
 /* Inspirations
@@ -8,18 +8,18 @@
  * http://www.cplusplus.com/reference/queue/queue/
  */
 
-using std::queue;
-
 void longuestChains(Graph& graph, list< vector<int> >& chains) {
 
     if (graph.GetVertices().size() == 0) {
         return;
     }
 
-    vector<int> pred (graph.GetVertices().size(), -1);
-    vector<int> q; // use as a queue that can be iterated through
+    std::map<int,int> pred;
+    for (int v : graph.GetVertices()) {
+        pred[v] = -1;
+    }
 
-    std::cout << "herp" << std::endl;
+    vector<int> q; // use as a queue that can be iterated through
 
     for (int& v : graph.GetVertices()) {
         std::cout << v << " in degree : " << graph.InDegree(v) << std::endl;
@@ -27,8 +27,6 @@ void longuestChains(Graph& graph, list< vector<int> >& chains) {
             q.push_back(v);
         }
     }
-
-    std::cout << "derp" << std::endl;
 
     int last = -1;
 
@@ -41,8 +39,6 @@ void longuestChains(Graph& graph, list< vector<int> >& chains) {
             std::vector<int>::iterator it = std::find(q.begin(), q.end(), v);
             if(it != q.end()) {
                 std::rotate(it, it + 1, q.end());
-                std::cout << "derp" << std::endl;
-
             } else {
                 q.push_back(v);
             }
@@ -50,17 +46,13 @@ void longuestChains(Graph& graph, list< vector<int> >& chains) {
         }
     }
 
-    std::cout << "hurpa" << std::endl;
-
     vector<int> c;
     while (last != -1) {
         c.push_back(last);
         last = pred[last];
     }
 
-    std::cout << "coin" << std::endl;
     chains.push_back(c);
-    std::cout << "coincoin" << std::endl;
     for (int& v : c) {
         graph - v;
     }

@@ -1,14 +1,5 @@
 #include "graph.h"
 
-void Graph::operator -(int v) {
-    auto it = std::find(this->vertices.begin(), this->vertices.end(), v);
-    this->vertices.erase(it);
-    for (list<int>& adjs : this->adjacencies) {
-        adjs.remove(v);
-    }
-    this->adjacencies.erase(this->adjacencies.begin() + (it - this->vertices.begin()));
-}
-
 Graph::Graph(int v, vector<pair<int, int> > &a)
     : axis(a) {
     for (int i = 0; i < v; i++) {
@@ -18,6 +9,14 @@ Graph::Graph(int v, vector<pair<int, int> > &a)
 
     for (auto& ax : this->axis) {
         this->adjacencies[ax.first].push_back(ax.second);
+    }
+}
+
+void Graph::operator -(int v) {
+    auto it = std::find(this->vertices.begin(), this->vertices.end(), v);
+    this->vertices.erase(it);
+    for (list<int>& adjs : this->adjacencies) {
+        adjs.remove(v);
     }
 }
 

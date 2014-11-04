@@ -19,10 +19,10 @@ private:
     vector< pair <int, int> > axis; // Axis between vertices
 
 public:
-    vector < list <int> > adjacencies; // holds, for one vertex, all adjacent vertices
+    vector< list <int> > adjacencies; // holds, for one vertex, all adjacent vertices
 
     Graph(int, vector< pair <int, int> >&);
-    void operator-(int); // removes a vertex from graph
+    void operator -(int); // removes a vertex from graph
     vector<int>& GetVertices() {return this->vertices;}
     int InDegree(int);
 };
