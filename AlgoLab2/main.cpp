@@ -1,5 +1,7 @@
 #include <map>
+#include <queue>
 #include "graph.h"
+#include "parser.h"
 
 /* Inspirations
  * http://stackoverflow.com/questions/11429308/how-to-check-if-value-is-in-list
@@ -8,8 +10,13 @@
  * http://www.cplusplus.com/reference/queue/queue/
  */
 
+using std::queue;
+
+// Recursivly compute chains in the graph, from longuest to shortest,
+// and stores them in a list
 void longuestChains(Graph& graph, list< vector<int> >& chains) {
 
+    //If we're done with this graph, stop
     if (graph.GetVertices().size() == 0) {
         return;
     }
@@ -21,8 +28,8 @@ void longuestChains(Graph& graph, list< vector<int> >& chains) {
 
     vector<int> q; // use as a queue that can be iterated through
 
+    // Get all vertices with no predecessor
     for (int& v : graph.GetVertices()) {
-        std::cout << v << " in degree : " << graph.InDegree(v) << std::endl;
         if (graph.InDegree(v) == 0) {
             q.push_back(v);
         }
@@ -30,6 +37,7 @@ void longuestChains(Graph& graph, list< vector<int> >& chains) {
 
     int last = -1;
 
+    // Handle every successor to each vertex in the queue
     while (!q.empty()) {
         int u = q.back();
         q.pop_back();
@@ -42,22 +50,49 @@ void longuestChains(Graph& graph, list< vector<int> >& chains) {
             } else {
                 q.push_back(v);
             }
-
         }
     }
 
+    // Construct the chain and add it to the list
     vector<int> c;
     while (last != -1) {
         c.push_back(last);
         last = pred[last];
     }
-
+    std::reverse(c.begin(), c.end());
     chains.push_back(c);
+
+    // Remove current vertices from the graph for the next call
     for (int& v : c) {
         graph - v;
     }
-
     longuestChains(graph, chains);
+}
+
+void topologicSort(Graph& graph) {
+
+    queue<int> q; // use as a queue that can be iterated through
+    vector<int> degree (graph.GetVertices().size(), -1);
+
+    // Get all vertices with no predecessor
+    for (int& v : graph.GetVertices()) {
+        degree[v] = graph.InDegree(v);
+        if (degree[v] == 0) {
+            q.push(v);
+        }
+    }
+
+    while(!q.empty()) {
+        int u = q.front();
+        q.pop();
+        std::cout << u << std::endl;
+        for (auto& v : graph.adjacencies[u]) { // for each (u,v) axis
+            degree[v]--;
+            if (degree[v] == 0) {
+                q.push(v);
+            }
+        }
+    }
 }
 
 int main()
@@ -67,8 +102,7 @@ int main()
     axis.push_back(std::make_pair(2,3));
     axis.push_back(std::make_pair(2,0));
     Graph graph (4, axis);
-
-    std::cout << "Graph size : " << graph.adjacencies.size() << std::endl;
+    topologicSort(graph);
 
     list< vector<int> > chains;
     longuestChains(graph, chains);
@@ -82,6 +116,12 @@ int main()
         }
         std::cout << ")" << std::endl;
     }
+
+    Parser parser;
+    Graph graph2 = parser.Read("/home/gwaihir/Documents/My Documents/INF4715_ALGO/AlgoLab2-build/tp2-donnees/poset10-4a");
+    topologicSort(graph2);
+    chains = {};
+    // longuestChains(graph2, chains);
 
     return 0;
 }
