@@ -12,61 +12,65 @@
 
 using std::queue;
 
-// Recursivly compute chains in the graph, from longuest to shortest,
-// and stores them in a list
-void longuestChains(Graph& graph, list< vector<int> >& chains) {
-
-    //If we're done with this graph, stop
-    if (graph.GetVertices().size() == 0) {
-        return;
-    }
+vector<int> longuestChain(Graph& graph) {
 
     std::map<int,int> pred;
-    for (int v : graph.GetVertices()) {
-        pred[v] = -1;
-    }
+    list<int> q; // use as a queue that can be iterated through
+    int last = -1;
 
-    vector<int> q; // use as a queue that can be iterated through
-
-    // Get all vertices with no predecessor
     for (int& v : graph.GetVertices()) {
+        pred[v] = -1;
+        // Get all vertices with no predecessor
         if (graph.InDegree(v) == 0) {
-            q.push_back(v);
+            q.push_front(v);
         }
     }
-
-    int last = -1;
 
     // Handle every successor to each vertex in the queue
     while (!q.empty()) {
         int u = q.back();
         q.pop_back();
+        last = u;
         for (auto& v : graph.adjacencies[u]) { // for each (u,v) axis
             pred[v] = u;
-            last = v;
-            std::vector<int>::iterator it = std::find(q.begin(), q.end(), v);
+            std::list<int>::iterator it = std::find(q.begin(), q.end(), v);
             if(it != q.end()) {
-                std::rotate(it, it + 1, q.end());
-            } else {
-                q.push_back(v);
+                q.erase(it);
             }
+            q.push_front(v);
         }
     }
 
     // Construct the chain and add it to the list
-    vector<int> c;
+    vector<int> c = {};
     while (last != -1) {
         c.push_back(last);
         last = pred[last];
     }
-    std::reverse(c.begin(), c.end());
-    chains.push_back(c);
 
-    // Remove current vertices from the graph for the next call
-    for (int& v : c) {
-        graph - v;
+    return c;
+}
+
+list< vector<int> > greedyChains(Graph& graph) {
+
+    list< vector<int> > chains = {};
+    vector<int> c = longuestChain(graph);
+
+    while (!c.empty()) {
+        // Remove all vertices in c and incident arcs from graph
+        for (int& v : c) {
+            graph - v;
+        }
+        std::cout << "ping" << std::endl;
+        chains.push_back(c);
+        c = longuestChain(graph);
     }
-    longuestChains(graph, chains);
+
+    for (int& v : graph.GetVertices()) {
+        chains.push_back(vector<int> (1, v));
+    }
+
+    return chains;
 }
 
 // Backtracking support for topologic sort count
@@ -117,16 +121,15 @@ int topologicSortCount(Graph& graph) {
 int main()
 { 
     vector< pair <int, int> > axis;
+    list< vector<int> > chains;
     axis.push_back(std::make_pair(1,3));
     axis.push_back(std::make_pair(2,3));
     axis.push_back(std::make_pair(2,0));
     Graph graph (4, axis);
     std::cout << topologicSortCount(graph) << std::endl;
 
-    list< vector<int> > chains;
-    longuestChains(graph, chains);
-
-    std::cout << "Greedy algorithm :" <<std::endl;
+    std::cout << "Greedy algorithm :" << std::endl;
+    chains = greedyChains(graph);
 
     for (auto& c : chains) {
         std::cout << "(";
@@ -140,7 +143,6 @@ int main()
     Graph graph2 = parser.Read("/home/gwaihir/Documents/My Documents/INF4715_ALGO/AlgoLab2-build/tp2-donnees/poset10-4a");
     std::cout << topologicSortCount(graph2) << std::endl;
     chains = {};
-    //longuestChains(graph2, chains);
 
     return 0;
 }

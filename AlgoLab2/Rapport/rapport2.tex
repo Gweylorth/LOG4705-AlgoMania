@@ -109,6 +109,12 @@ On définit un tri topologique de $G$ comme étant une permutation $ \sigma $ de
 
 \subsection{Fonctionnement de l'algorithme vorace}
 
+Contrairement aux deux autres méthodes que nous verrons, l'algorithme vorace ne vise pas directement l'obtention des extensions linéaires du graphe. 
+
+Pour déterminer le nombre de permutations, l'algorithme calcule une décomposition du graphe en chaînes, de longueur décroissante. Ces chaînes sont calculées itérativement, en enlevant à chaque fois les sommets du graphe gérés.
+
+Ensuite, cette décomposition permet d'approximer le nombre d'extensions linéaires selon $ 2^{ \frac{1}{2} n H(G)} $, où $ H(G) = \sum_{i=1}^{k} (- \frac{|c_{i}|}{|S|} log \frac{|c_{i}|}{|S|} ) $.
+
 \subsection{Fonctionnement de l'algorithme retour arrière}
 
 \subsection{Fonctionnement de l'algorithme dynamique}
