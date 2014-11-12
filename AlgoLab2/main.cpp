@@ -69,30 +69,49 @@ void longuestChains(Graph& graph, list< vector<int> >& chains) {
     longuestChains(graph, chains);
 }
 
-void topologicSort(Graph& graph) {
+// Backtracking support for topologic sort count
+void backtrack(Graph& graph, vector<int>& queue, vector<int>& degree, int& count) {
+    if (queue.empty()) {
+        count++;
+        return;
+    }
 
-    queue<int> q; // use as a queue that can be iterated through
+
+    for (int i = 0; i < queue.size(); i++) {
+        vector<int> branchQueue (queue);
+        vector<int> branchDegree (degree);
+
+        int u = branchQueue[i];
+        branchQueue.erase(branchQueue.begin() + i);
+
+        for (auto& v : graph.adjacencies[u]) { // for each (u,v) axis
+            branchDegree[v]--;
+            if (branchDegree[v] == 0) {
+                branchQueue.push_back(v);
+            }
+        }
+        backtrack(graph, branchQueue, branchDegree, count);
+    }
+}
+
+// Returns number of topologic sort permutations through backtracking
+int topologicSortCount(Graph& graph) {
+
+    vector<int> q; // use as a queue that can be iterated through
     vector<int> degree (graph.GetVertices().size(), -1);
+    int count = 0;
 
     // Get all vertices with no predecessor
     for (int& v : graph.GetVertices()) {
         degree[v] = graph.InDegree(v);
         if (degree[v] == 0) {
-            q.push(v);
+            q.push_back(v);
         }
     }
 
-    while(!q.empty()) {
-        int u = q.front();
-        q.pop();
-        std::cout << u << std::endl;
-        for (auto& v : graph.adjacencies[u]) { // for each (u,v) axis
-            degree[v]--;
-            if (degree[v] == 0) {
-                q.push(v);
-            }
-        }
-    }
+    backtrack(graph, q, degree, count);
+
+    return count;
 }
 
 int main()
@@ -102,7 +121,7 @@ int main()
     axis.push_back(std::make_pair(2,3));
     axis.push_back(std::make_pair(2,0));
     Graph graph (4, axis);
-    topologicSort(graph);
+    std::cout << topologicSortCount(graph) << std::endl;
 
     list< vector<int> > chains;
     longuestChains(graph, chains);
@@ -119,9 +138,9 @@ int main()
 
     Parser parser;
     Graph graph2 = parser.Read("/home/gwaihir/Documents/My Documents/INF4715_ALGO/AlgoLab2-build/tp2-donnees/poset10-4a");
-    topologicSort(graph2);
+    std::cout << topologicSortCount(graph2) << std::endl;
     chains = {};
-    longuestChains(graph2, chains);
+    //longuestChains(graph2, chains);
 
     return 0;
 }
