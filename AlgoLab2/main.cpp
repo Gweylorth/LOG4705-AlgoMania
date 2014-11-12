@@ -121,7 +121,7 @@ int main()
     Graph graph2 = parser.Read("/home/gwaihir/Documents/My Documents/INF4715_ALGO/AlgoLab2-build/tp2-donnees/poset10-4a");
     topologicSort(graph2);
     chains = {};
-    // longuestChains(graph2, chains);
+    longuestChains(graph2, chains);
 
     return 0;
 }
