@@ -180,13 +180,44 @@ void printChains (list< vector<int> >& chains) {
     std::cout << out << std::endl;
 }
 
-int main()
-{ 
+int BadUseError()
+{
+    std::cout << "Bad args! Usage : program [-p] -f filepath" << std::endl;
+    return 1;
+}
+
+int main(int argc, char* argv[])
+{
+    if (argc < 3 || argc > 4) {
+        return BadUseError();
+    }
+
+    bool print = false;
+
     Parser parser;
-    Graph graph2 = parser.Read("/home/gwaihir/Documents/My Documents/INF4715_ALGO/AlgoLab2-build/tp2-donnees/poset10-4a");
-    std::cout << backtrackingTopologicSortCount(graph2) << std::endl;
-    std::cout << greedyTopologicSortCount(graph2) << std::endl;
-    //std::cout << dynamicTopologicSortCount(graph2) << std::endl;
+    Graph graph;
+    int count;
+    clock_t start, stop;
+
+    for(int i = 1; i < argc; i++) {
+        if (std::string(argv[i]) == "-p") {
+            print = true;
+        }
+        else if (std::string(argv[i]) == "-f") {
+            graph = parser.Read(std::string(argv[++i]));
+        }
+        else {
+            return BadUseError();
+        }
+    }
+
+    start = clock();
+    count = dynamicTopologicSortCount(graph);
+    stop = clock();
+    std::cout << double(stop - start) / CLOCKS_PER_SEC << std::endl;
+    if (print) {
+        std::cout << count << std::endl;
+    }
 
     return 0;
 }

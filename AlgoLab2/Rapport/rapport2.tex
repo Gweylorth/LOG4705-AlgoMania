@@ -97,7 +97,7 @@ Lors de cette expérience, nous allons couvrir le problème de tri topologique d
 
 Au début de l'expérience, nous n'avons pas de suppositions de précédence d'une méthode sur une autre, et nous n'avons donc pas d'hypothèse précise à vérifier, contrairement au rapport précédent. Nous pouvons simplement supposer que l'algorithme vorace, dont l'utilisation afin de déterminer le nombre d'extensions linéaires repose sur une approximation par formule mathématique, sera moins précis que les deux autres méthodes.
 
-L'on peut aussi supposer que l'algorithme de programmation dynamique, reposant sur une structure de données à $N$ dimensions, sera bien plus coûteux et difficile à implémenter.
+L'on peut aussi supposer que l'algorithme de programmation dynamique, reposant sur une structure de données à $N$ dimensions, sera bien plus coûteux et difficile à implémenter, mais plus rapide que l'algorithme exhaustif de retour arrière.
 
 Ce rapport a pour but de présenter les différents résultats obtenus avec chaque implémentation, appliquer des analyses asympotiques et hybrides, et de discuter des méthodes utilisées.
 
@@ -107,6 +107,8 @@ Dans ce rapport, tous les graphes évoqués seront considérés orientés et acy
 
 On définit un tri topologique de $G$ comme étant une permutation $ \sigma $ de $ S $ telle que $ (i,j) \in A \longrightarrow \sigma(i) < \sigma(j) $.
 
+Les trois méthodes reposent sur une mécanique similaire : détecter les sommets dont le degré entrant est nul, les traiter, les ignorer, itérer.
+
 \subsection{Fonctionnement de l'algorithme vorace}
 
 Contrairement aux deux autres méthodes que nous verrons, l'algorithme vorace ne vise pas directement l'obtention des extensions linéaires du graphe. 
@@ -115,12 +117,33 @@ Pour déterminer le nombre de permutations, l'algorithme calcule une décomposit
 
 Ensuite, cette décomposition permet d'approximer le nombre d'extensions linéaires selon $ 2^{ \frac{1}{2} n H(G)} $, où $ H(G) = \sum_{i=1}^{k} (- \frac{|c_{i}|}{|S|} log \frac{|c_{i}|}{|S|} ) $.
 
+Lors de la recherche d'une chaîne la plus longue, le pire cas surviendrait si tous les sommets sauf un étaient connectés seulement à ce dernier. La file contiendrait alors $ |S| - 1 $ éléments. Cependant, l'ajout / retrait dans une file est trivial et se déroule en $ O(1) $. La recherche d'élément est plus problématique, une file n'étant pas triée, et cette vitesse dépendra donc de l'implémentation. Afin de simplifier ajout et retrait d'élément, et utilisation comme file (avec ajout en avant ou en fond de file), une liste chaînée est utilisée, dans laquelle la recherche s'effectue en $ O(n) $ selon la méthode \textit{find} de la STL.
+Notons que s'il n'y a aucun arc dans le graphe, nous aurons un tour de boucle supplémentaire, mais la recherche dans la structure n'est plus effectuée, et l'opération est plus rapide. Pour trouver toutes les chaînes, on répète cette opération jusqu'à ce qu'il n'y ait plus de chaîne valide, soit au maximum $ |S| $ fois.
+Cette méthode a donc une complexité polynomiale, en $ O(|S|^{2}) $.
+
 \subsection{Fonctionnement de l'algorithme retour arrière}
+
+L'algorithme de retour arrière, ou \textit{backtracking}, s'apparente à la contruction et au parcours d'un arbre de solutions. À la racine de l'arbre se trouve le noeud vide, qui a un noeud fils par sommet de degré entrant 0 dans le graphe G.
+
+À chaque embranchement, l'algorithme construit la chaîne en ajoutant un des sommets disponibles. Cette construction, dont les feuilles aboutissent toujours à une solution valide du problème, permet de revenir à un embranchement précédent pour explorer les autres solutions possibles.
+
+Ainsi, le nombre de feuilles de l'arbre construit de la sorte correspond exactement au nombre de permutations possibles. Cette méthode est donc plus précise que l'approximation mathématique, mais elle est bien plus coûteuse, de par les nombreux embranchements nécessaires à la récursion sur un graphe important, comme nous le verrons, bien qu'il ne soit pas nécessaire de garder les permutations en mémoire.
+
+%Sans la récursivité, la méthode de base pour trouver une seule extension appartient à $ O (|S| \times |A|) $.
+
+Cette méthode teste toutes les permutations possibles de manière exhaustive, et est donc en temps super-polynomial, appartenant à $ O (|S|!) $.
 
 \subsection{Fonctionnement de l'algorithme dynamique}
 
-\subsection{Étude de complexité}
+En général, on utilise le patron de conception algorithmique dynamique lorsqu'il est possible de subdiviser un problème en sous-problèmes que l'on peut recombiner, et dont la résolution demande des calculs redondants.
 
+Contrairement aux algorithmes diviser-pour-régner, qui adoptent une approche \textit{top-down}, la programmation dynamique repose sur une méthodologie \textit{bottom-up}. Connaissant un cas de base qui permet de remplir les \og bords \fg du tableau de calculs, chaque case du tableau est remplie en fonction des précédentes, évitant ainsi tout calcul inutile.
+
+L'intérêt est de remplir le tableau jusqu'à arriver à la toute dernière case, qui sera notre solution, sans jamais répéter d'opération. On part du cas de base, et on remonte vers la solution.
+
+Ici, nous savons que le nombre d'extensions linéaires d'un graphe est égal à la somme des extensions linéaires de ses sous-graphes dont on a retiré les arcs entrants. On se base donc sur la décomposition vorace en chaînes d'un graphe évoquée précédemment.
+
+Le nombre de chaînes étant variable et non borné, le tableau de données devra être pensé pour gérer $ N $ dimensions.
 
 \section{Protocole expérimental}
 
@@ -131,6 +154,13 @@ Les tests ont été effectués sur un système ArchLinux 64bits, kernel 3.16.3-1
 Le programme a été écrit en C++ 11 et compilé avec GCC 4.9.1.
 
 \subsection{Déroulement de l'expérience}
+
+Un soin tout particulier a été apporté à la rédaction du code qui est voulu lisible et efficace.
+Une fois les algorithmes vorace et retour arrière implémentés, et la validité approximative des résultats de la méthode vorace vérifiée, les tests ont été lancés sur tous les exemplaires (de 10 à 22 sommets, et largeur 4 à 8). Les tests ont été lancés sans attendre la fin de l'implémentation de l'algorithme dynamique, car la difficulté de celui-ci mettait en doute sa réussite, et la longueur des tests appelait un lancement au plus tôt.
+
+Les données à 26 et 30 sommets, ainsi que celles de largeur 10, ont été écartées à cause de la longueur des tests et de leur consommation trop importante sur une machine personnelle.
+
+Ces tests ont été automatisés, une fois les exécutables créés, par un script Bash écrivant les données brutes dans un fichier importable sous LibreOffice. Ces fichiers, un par exécutable, consignent les temps d'exécution pour chaque jeu de données.
 
 \section{Résultats}
 
