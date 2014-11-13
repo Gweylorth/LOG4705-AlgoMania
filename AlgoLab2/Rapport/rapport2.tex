@@ -174,13 +174,27 @@ Ces tests ont été automatisés, une fois les exécutables créés, par un scri
 
 \subsection{Analyse hybride}
 
-\subsection{Discussion}
-
 \subsubsection{Qualité de réponse}
+
+Comme vu précédemment, l'approximation mathématique par l'algorithme vorace rend des solutions éloignées du résultat réel. Cette méthode peut donc seulement être utilisée afin d'avoir un ordre de grandeur rapide et efficace du résultat, et trouve son sens par exemple dans un programme embarqué.
+
+L'algorithme retour arrière permet d'obtenir des résultats exacts. Nous supposons aussi que la méthode dynamique fait de même, mais nous ne pouvons malheureusement pas le vérifier.
 
 \subsubsection{Consommation de ressources}
 
+Sans surprise, l'algorithme vorace est le plus économe en ressources. Il ne requiert qu'une map et une file, toutes deux de taille inférieure ou égale à $ |S| $.
+
+Le \textit{backtracking} est extrêmement lourd, car il nécessite l'instanciation de deux nouveaux vecteurs de taille inférieure ou égale à $ |S| $ pour chaque embranchement, qu'il ne peut pas détruire avant d'avoir le résultat du graphe courant. Il a donc deux tableaux pour chacune des permutations possibles de sommets, soit $ 2 |S| \times |S|!$.
+
+Quant à la méthode dynamique, elle requiert par définition l'instanciation et l'utilisation d'un tableau dont la dimension peut varier de 1 à $|S|$, et le stockage des chaînes calculées. L'initialisation du tableau est lourde et complexe, mais celui-ci peut ensuite être partagé par tous les embranchements de récursion (passage par référence). Il demande donc un espace mémoire conséquent, mais ne répète pas de nouvelles instanciations, contrairement à la méthode par retour arrière.
+
 \subsubsection{Implémentation}
+
+La difficulté d'implémentation des algorithmes vorace et retour arrière a été assez similaire, et moyenne. La méthode vorace requiert des choix plus réfléchis des structures de données à utiliser pour garder l'idée du pseudo-code (mécanisme de file) tout en permettant une certaine flexibilité de manipulation. La recherche d'élément, par exemple, est impossible dans une simple file. De plus, le stockage des prédecesseurs doit tenir compte du fait que le graphe peut avoir perdu de ses sommets, d'où l'intérêt d'une structure mappée.
+
+Le retour arrière présente des problèmes plus conceptuels, sur l'utilisation de la récursion pour parcourir l'arbre de solutions, sans le avoir à le créer. Mais une fois cet écueil franchi, le reste de l'implémentation est simple.
+
+Enfin, la méthode dynamique a posé beaucoup de problèmes sur son implémentation, uniquement à cause de l'utilisation et du parcours d'une structure de données à dimension variable. De plus, celle-ci repose sur le fait que la méthode vorace ait déjà été implémentée. C'est donc la méthode la plus complexe à concevoir et mettre en place.
 
 \section{Conclusion}
 
