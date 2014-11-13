@@ -21,7 +21,7 @@ private:
 public:
     vector< list <int> > adjacencies; // holds, for one vertex, all adjacent vertices
 
-    //Graph() {}
+    Graph() {}
     Graph(int, vector< pair <int, int> >&);
     void operator -(int); // removes a vertex from graph
     vector<int>& GetVertices() {return this->vertices;}
