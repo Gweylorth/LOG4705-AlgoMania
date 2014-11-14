@@ -107,7 +107,7 @@ Dans ce rapport, tous les graphes évoqués seront considérés orientés et acy
 
 On définit un tri topologique de $G$ comme étant une permutation $ \sigma $ de $ S $ telle que $ (i,j) \in A \longrightarrow \sigma(i) < \sigma(j) $.
 
-Les trois méthodes reposent sur une mécanique similaire : détecter les sommets dont le degré entrant est nul, les traiter, les ignorer, itérer.
+Les trois méthodes reposent sur une mécanique similaire : détecter les sommets dont le degré entrant est nul, les traiter, les ignorer, itérer. Leur complexité théorique est étudiée plus tard dans ce rapport.
 
 \subsection{Fonctionnement de l'algorithme vorace}
 
@@ -117,10 +117,6 @@ Pour déterminer le nombre de permutations, l'algorithme calcule une décomposit
 
 Ensuite, cette décomposition permet d'approximer le nombre d'extensions linéaires selon $ 2^{ \frac{1}{2} n H(G)} $, où $ H(G) = \sum_{i=1}^{k} (- \frac{|c_{i}|}{|S|} log \frac{|c_{i}|}{|S|} ) $.
 
-Lors de la recherche d'une chaîne la plus longue, le pire cas surviendrait si tous les sommets sauf un étaient connectés seulement à ce dernier. La file contiendrait alors $ |S| - 1 $ éléments. Cependant, l'ajout / retrait dans une file est trivial et se déroule en $ O(1) $. La recherche d'élément est plus problématique, une file n'étant pas triée, et cette vitesse dépendra donc de l'implémentation. Afin de simplifier ajout et retrait d'élément, et utilisation comme file (avec ajout en avant ou en fond de file), une liste chaînée est utilisée, dans laquelle la recherche s'effectue en $ O(n) $ selon la méthode \textit{find} de la STL.
-Notons que s'il n'y a aucun arc dans le graphe, nous aurons un tour de boucle supplémentaire, mais la recherche dans la structure n'est plus effectuée, et l'opération est plus rapide. Pour trouver toutes les chaînes, on répète cette opération jusqu'à ce qu'il n'y ait plus de chaîne valide, soit au maximum $ |S| $ fois.
-Cette méthode a donc une complexité polynomiale, en $ O(|S|^{2}) $.
-
 \subsection{Fonctionnement de l'algorithme retour arrière}
 
 L'algorithme de retour arrière, ou \textit{backtracking}, s'apparente à la contruction et au parcours d'un arbre de solutions. À la racine de l'arbre se trouve le noeud vide, qui a un noeud fils par sommet de degré entrant 0 dans le graphe G.
@@ -128,10 +124,6 @@ L'algorithme de retour arrière, ou \textit{backtracking}, s'apparente à la con
 À chaque embranchement, l'algorithme construit la chaîne en ajoutant un des sommets disponibles. Cette construction, dont les feuilles aboutissent toujours à une solution valide du problème, permet de revenir à un embranchement précédent pour explorer les autres solutions possibles.
 
 Ainsi, le nombre de feuilles de l'arbre construit de la sorte correspond exactement au nombre de permutations possibles. Cette méthode est donc plus précise que l'approximation mathématique, mais elle est bien plus coûteuse, de par les nombreux embranchements nécessaires à la récursion sur un graphe important, comme nous le verrons, bien qu'il ne soit pas nécessaire de garder les permutations en mémoire.
-
-%Sans la récursivité, la méthode de base pour trouver une seule extension appartient à $ O (|S| \times |A|) $.
-
-Cette méthode teste toutes les permutations possibles de manière exhaustive, et est donc en temps super-polynomial, appartenant à $ O (|S|!) $.
 
 \subsection{Fonctionnement de l'algorithme dynamique}
 
@@ -156,21 +148,59 @@ Le programme a été écrit en C++ 11 et compilé avec GCC 4.9.1.
 \subsection{Déroulement de l'expérience}
 
 Un soin tout particulier a été apporté à la rédaction du code qui est voulu lisible et efficace.
-Une fois les algorithmes vorace et retour arrière implémentés, et la validité approximative des résultats de la méthode vorace vérifiée, les tests ont été lancés sur tous les exemplaires (de 10 à 22 sommets, et largeur 4 à 8). Les tests ont été lancés sans attendre la fin de l'implémentation de l'algorithme dynamique, car la difficulté de celui-ci mettait en doute sa réussite, et la longueur des tests appelait un lancement au plus tôt.
+Une fois les algorithmes vorace et retour arrière implémentés, et la validité approximative des résultats de la méthode vorace vérifiée, les tests ont été lancés sur tous les exemplaires (de 10 à 22 sommets, et largeur 4 à 8), sans attendre la fin de l'implémentation de l'algorithme dynamique, car la difficulté de celui-ci mettait en doute sa réussite, et la longueur des tests appelait un lancement au plus tôt.
 
-Les données à 26 et 30 sommets, ainsi que celles de largeur 10, ont été écartées à cause de la longueur des tests et de leur consommation trop importante sur une machine personnelle.
+Les données à 26 et 30 sommets, ainsi que celles de largeur 10, ont été écartées à cause de la longueur des tests et de leur consommation trop importante sur une machine personnelle. Durant les calculs, le CPU était en permanence à 100\% de sa capacité.
 
 Ces tests ont été automatisés, une fois les exécutables créés, par un script Bash écrivant les données brutes dans un fichier importable sous LibreOffice. Ces fichiers, un par exécutable, consignent les temps d'exécution pour chaque jeu de données.
 
+Malheureusement, malgré de nombreux essais, l'algorithme dynamique n'a pas été implémenté de manière satisfaisante. Nous en discuterons plus en avant dans ce rapport. Aucun résultat probant n'a donc pu être extrait et analysé pour cette partie de l'expérience.
+
 \section{Résultats}
+
+Suite aux tests ont été identifiées plusieurs informations sensées à analyser. Sont donc reportées ci-après la moyenne des temps de calcul pour les dix exemplaires d'une paire (sommets, largeur), l'écart-type de ces temps dans un échantillon, et l'erreur de l'approximation par rapport au résultat exact. Les décomptes d'extensions linéaires en eux-mêmes ne sont pas considérés pertinents à analyser, et sont reportés en annexe.
+
+% Tableau temps
+
+% Graphes moyennes de temps
+
+Si on peut constater une allure similaire sur les deux graphes, l'échelle des temps d'exécution de l'algorithme retour arrière est bien plus large et croît intensément avec la largeur des exemplaires. Mais durant l'expérience, nous avons pu noter un très net déséquilibre des temps de calcul au sein d'une même population de résultats de l'algorithme retour arrière, ce qui ne semblait pas être le cas pour la méthode vorace. Afin d'étudier cette anomalie, nous avons calculé et reporté les écarts-type des calculs dans le tableau suivant :
+
+% Tableau ecart type
+
+% Graphes ecart type
+
+La représentation des écarts-type confirme notre impression, celui-ci semble croître exponentiellement avec la taille des exemplaires lors du calcul par \textit{backtracking}, tandis qu'il reste faible et peu significatif avec la méthode vorace.
+Bien que la méthode vorace soit manifestement bien plus rapide, elle repose sur une approximation mathématique du résultat réel. Nous avons donc jugé intéressant d'étudier la marge d'erreur de cette approximation par rapport au résultat exact fourni par la méthode retour arrière.
+
+% Tableau erreur
+% Graphe erreur
+
+% Conclusion erreur
 
 \section{Analyse}
 
 \subsection{Analyse asymptotique}
 
 \subsubsection{Algorithme vorace}
+
+Lors de la recherche d'une chaîne la plus longue, le pire cas surviendrait si tous les sommets sauf un étaient connectés seulement à ce dernier. La file contiendrait alors $ |S| - 1 $ éléments. L'ajout / retrait dans une file est trivial et se déroule en $ O(1) $. La recherche d'élément est plus problématique, une file n'étant pas triée, et cette vitesse dépendra donc de l'implémentation. Afin de simplifier l'ajout et le retrait d'élément, et utilisation comme file (avec ajout en avant ou en fond de file) tout en gardant une structure itérable, une liste chaînée est utilisée, dans laquelle la recherche s'effectue en $ O(n) $ selon la méthode \textit{find} de la STL.
+
+Notons que s'il n'y a aucun arc dans le graphe, nous aurons un tour de boucle de file supplémentaire, mais la recherche dans la structure n'est plus effectuée, et l'opération est plus rapide, avec un corps de boucle alors en $ O(1) $. 
+Pour trouver toutes les chaînes, on répète la recherche de la chaîne la plus longue jusqu'à ce qu'il n'y ait plus de chaîne valide, soit au maximum $ |S| $ fois.
+Cette méthode a donc une complexité polynomiale, en $ O(|S|^{2}) $.
+
 \subsubsection{Algorithme retour arrière}
+
+%Sans la récursivité, la méthode de base pour trouver une seule extension appartient à $ O (|S| \times |A|) $.
+
+Cette méthode teste toutes les permutations possibles de manière exhaustive, et est donc en temps super-polynomial, appartenant à $ O (|S|!) $.
+
 \subsubsection{Algorithme dynamique}
+
+Rappelons le, l'algorithme dynamique consiste majoritairement à remplir un tableau n-dimensionnel de solutions de sous-problèmes et en recombiner les résultats sans effectuer de calcul redondant. Nous ne considérons pas les problématiques de complexité spatiale dans cette expérience, et laissons donc de côté les problématiques de stockage introduites par une structure de données en N dimensions.
+
+Chaque case de cet hypercube est calculée à l'aide d'appels à la décomposition vorace d'un sous graphe. Le temps sera exponentiel.
 
 \subsection{Analyse hybride}
 
@@ -208,7 +238,8 @@ Aucune portion de code de l'implémentation ou de la représentation des résult
 	\item \href{http://www.cplusplus.com/doc/tutorial/arrays/}{C++ Reference, Array class}
 	\item \href{http://www.cplusplus.com/reference/tuple/tuple/}{C++ Reference, Tuple class}
 	\item \href{http://stackoverflow.com/questions/7868936/c-read-file-line-by-line}{Stack Overflow, Réponse de Kerrek SB à la question "Read file line by line"}
-	\item Notes de cours "Algorithmes Diviser-pour-Regner", Gilles Pesant
+	\item Notes de cours "Algorithmes Voraces", Gilles Pesant
+	\item Notes de cours "Algorithmes Dynamiques", Gilles Pesant
 \end{itemize}
 
 \end{document}
