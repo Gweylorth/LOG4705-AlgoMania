@@ -73,7 +73,7 @@ list< vector<int> > greedyChains(Graph graph) {
 }
 
 // Applies mathematical approximation to greedy chains computation
-int greedyTopologicSortCount(Graph& graph) {
+u_int64_t greedyTopologicSortCount(Graph& graph) {
     double vertices = graph.GetVertices().size();
     auto chains = greedyChains(graph);
     double hg = 0;
@@ -81,11 +81,12 @@ int greedyTopologicSortCount(Graph& graph) {
         double x = c.size()/vertices;
         hg += -x * log2(x);
     }
-    return pow(2, .5 * (vertices+1) * hg);
+
+    return pow((long double) 2, .5 * (vertices+1) * hg);
 }
 
 // Backtracking support for topologic sort count
-void backtrack(Graph& graph, vector<int>& queue, vector<int>& degree, int& count) {
+void backtrack(Graph& graph, vector<int>& queue, vector<int>& degree, u_int64_t& count) {
     if (queue.empty()) {
         count++;
         return;
@@ -109,11 +110,11 @@ void backtrack(Graph& graph, vector<int>& queue, vector<int>& degree, int& count
 }
 
 // Returns number of topologic sort permutations through backtracking
-int backtrackingTopologicSortCount(Graph& graph) {
+u_int64_t backtrackingTopologicSortCount(Graph& graph) {
 
     vector<int> q; // use as a queue that can be iterated through
     vector<int> degree (graph.GetVertices().size(), -1);
-    int count = 0;
+    u_int64_t count = 0;
 
     // Get all vertices with no predecessor
     for (int& v : graph.GetVertices()) {
@@ -129,7 +130,7 @@ int backtrackingTopologicSortCount(Graph& graph) {
 }
 
 // Recursive call for dynamic algorithm
-int dynamicRecursive(list< vector<int> >& chains, vector<int>& extensions, int index) {
+u_int64_t dynamicRecursive(list< vector<int> >& chains, vector<int>& extensions, int index) {
 
     // if we already did this one, return it
     if (extensions[index] != 0) {
@@ -137,7 +138,7 @@ int dynamicRecursive(list< vector<int> >& chains, vector<int>& extensions, int i
     }
 
     // else, compute it recursively from its neighbours
-    int sum = 0;
+    u_int64_t sum = 0;
     for (auto& c : chains) {
         sum += dynamicRecursive(chains, extensions, c.size());
     }
@@ -147,7 +148,7 @@ int dynamicRecursive(list< vector<int> >& chains, vector<int>& extensions, int i
     return sum;
 }
 
-int dynamicTopologicSortCount(Graph& graph) {
+u_int64_t dynamicTopologicSortCount(Graph& graph) {
     auto chains = greedyChains(graph);
     // we need a n-dimentional array, depending on the number of chains found
     int tabSize = 1;
@@ -212,7 +213,7 @@ int main(int argc, char* argv[])
     }
 
     start = clock();
-    count = dynamicTopologicSortCount(graph);
+    count = greedyTopologicSortCount(graph);
     stop = clock();
     std::cout << double(stop - start) / CLOCKS_PER_SEC << std::endl;
     if (print) {

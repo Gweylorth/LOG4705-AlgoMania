@@ -137,6 +137,8 @@ Ici, nous savons que le nombre d'extensions linéaires d'un graphe est égal à 
 
 Le nombre de chaînes étant variable et non borné, le tableau de données devra être pensé pour gérer $ N $ dimensions.
 
+\newpage
+
 \section{Protocole expérimental}
 
 \subsection{Environnement de développement}
@@ -148,35 +150,81 @@ Le programme a été écrit en C++ 11 et compilé avec GCC 4.9.1.
 \subsection{Déroulement de l'expérience}
 
 Un soin tout particulier a été apporté à la rédaction du code qui est voulu lisible et efficace.
-Une fois les algorithmes vorace et retour arrière implémentés, et la validité approximative des résultats de la méthode vorace vérifiée, les tests ont été lancés sur tous les exemplaires (de 10 à 22 sommets, et largeur 4 à 8), sans attendre la fin de l'implémentation de l'algorithme dynamique, car la difficulté de celui-ci mettait en doute sa réussite, et la longueur des tests appelait un lancement au plus tôt.
+Une fois les algorithmes vorace et retour arrière implémentés, et la validité approximative des résultats de la méthode vorace vérifiée, les tests ont été lancés sur tous les exemplaires, sans attendre la fin de l'implémentation de l'algorithme dynamique, car la difficulté de celui-ci mettait en doute sa réussite, et la longueur des tests appelait un lancement au plus tôt. Ces exemplaires comportent de 10 à 30 sommets (pas de 4), et sont d'une largeur entre 4 et 10 (pas de 2). Chacune des combinaisons sommets-largeur dispose d'une population de 10 exemplaires à tester.
 
-Les données à 26 et 30 sommets, ainsi que celles de largeur 10, ont été écartées à cause de la longueur des tests et de leur consommation trop importante sur une machine personnelle. Durant les calculs, le CPU était en permanence à 100\% de sa capacité.
+À partir des exemplaires à 18 sommets et 10 arcs, l'algorithme de \textit{backtracking} s'exécutait en un temps tellement important qu'il en est devenu bloquant pour l'utilisation de la machine. Un test plus exhaustif aurait nécessité une machine dédié, avec un processeur plus puissant, pendant plusieurs jours. Un multithreading pourrait aussi être extrèmement efficace, mais sort du cadre de l'expérience. Les données comportant plus d'arcs n'ont donc pas été considérées pour cet algorithme. Durant les calculs, le CPU était en permanence à 100\% de sa capacité.
 
 Ces tests ont été automatisés, une fois les exécutables créés, par un script Bash écrivant les données brutes dans un fichier importable sous LibreOffice. Ces fichiers, un par exécutable, consignent les temps d'exécution pour chaque jeu de données.
 
 Malheureusement, malgré de nombreux essais, l'algorithme dynamique n'a pas été implémenté de manière satisfaisante. Nous en discuterons plus en avant dans ce rapport. Aucun résultat probant n'a donc pu être extrait et analysé pour cette partie de l'expérience.
 
+Notons aussi que certains résultats de décompte sont de l'ordre de $ 10^{19} $, et causent des problèmes d'overflow. Nous avons essayé de contrebalancer ceci avec l'utilisation de variables de type \textit{unsigned int64}, capables de contenir des nombres jusqu'à ${1.9E^{19}}$, mais les limitations d'autres variables (rendu en \textit{long double} de la méthode \textit{pow} ) ont annulé ces efforts.
+
+\newpage
+
 \section{Résultats}
 
-Suite aux tests ont été identifiées plusieurs informations sensées à analyser. Sont donc reportées ci-après la moyenne des temps de calcul pour les dix exemplaires d'une paire (sommets, largeur), l'écart-type de ces temps dans un échantillon, et l'erreur de l'approximation par rapport au résultat exact. Les décomptes d'extensions linéaires en eux-mêmes ne sont pas considérés pertinents à analyser, et sont reportés en annexe.
+Suite aux tests ont été identifiées plusieurs informations sensées à analyser. Sont donc reportées ci-après la moyenne des temps de calcul pour les dix exemplaires d'une paire (sommets, largeur) (Figures 2 et 3), l'écart-type de ces temps dans un échantillon (Figures 4 et 5), et l'erreur de l'approximation par rapport au résultat exact (Figure 6). Les décomptes d'extensions linéaires en eux-mêmes ne sont pas considérés pertinents à analyser, et sont reportés en annexe (consultable en 2e page du tableur).
 
-% Tableau temps
+Notons que dans les tableaux qui suivent, la valeur $0$ indique une donnée non renseignée, due a un échantillon inexistant (comme l'impossible poset10-10), ou un calcul non effectué.
 
-% Graphes moyennes de temps
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=\textwidth]{spreadsheet/temps}
+	\caption{Tableau des moyennes de temps d'exécution des algorithmes vorace et retour arrière}
+\end{figure} 
 
-Si on peut constater une allure similaire sur les deux graphes, l'échelle des temps d'exécution de l'algorithme retour arrière est bien plus large et croît intensément avec la largeur des exemplaires. Mais durant l'expérience, nous avons pu noter un très net déséquilibre des temps de calcul au sein d'une même population de résultats de l'algorithme retour arrière, ce qui ne semblait pas être le cas pour la méthode vorace. Afin d'étudier cette anomalie, nous avons calculé et reporté les écarts-type des calculs dans le tableau suivant :
+\begin{figure}[h!]
+	\begin{subfigure}[c]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{spreadsheet/graph1}
+		\caption{Méthode vorace}
+	\end{subfigure}
+	\begin{subfigure}[c]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{spreadsheet/graph2}
+		\caption{Méthode retour arrière}
+	\end{subfigure}
+	\caption{Représentation graphique des moyennes de temps de calcul, selon la largeur et le nombre de sommets}
+\end{figure}
 
-% Tableau ecart type
+Les deux graphes sont très peu similaires, même sans considérer le plus grand nombre de données du premier. L'échelle des temps d'exécution de l'algorithme retour arrière est bien plus large et croît intensément avec la largeur des exemplaires. La répartition des points sur le graphe 3.a ne permet pas de tirer de conclusion importante, si ce n'est que le temps semble croître très légèrement avec la taille de la population, et ne paraît pas être en relation avec la largeur du graphe.
 
-% Graphes ecart type
+Mais durant l'expérience, nous avons pu noter un très net déséquilibre des temps de calcul au sein d'une même population de résultats de l'algorithme retour arrière, ce qui ne semblait pas être le cas pour la méthode vorace. Afin d'étudier cette anomalie, nous avons calculé et reporté les écarts-type des calculs dans le tableau suivant : \\[2em]
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=\textwidth]{spreadsheet/ecarts}
+	\caption{Tableau des écarts-type de temps d'exécution des algorithmes vorace et retour arrière}
+\end{figure}
+
+\begin{figure}[h!]
+	\begin{subfigure}[c]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{spreadsheet/graph3}
+		\caption{Méthode vorace}
+	\end{subfigure}
+	\begin{subfigure}[c]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{spreadsheet/graph4}
+		\caption{Méthode retour arrière}
+	\end{subfigure}
+	\caption{Représentation graphique des écarts-type de temps de calcul, selon la largeur et le nombre de sommets}
+\end{figure}
 
 La représentation des écarts-type confirme notre impression, celui-ci semble croître exponentiellement avec la taille des exemplaires lors du calcul par \textit{backtracking}, tandis qu'il reste faible et peu significatif avec la méthode vorace.
-Bien que la méthode vorace soit manifestement bien plus rapide, elle repose sur une approximation mathématique du résultat réel. Nous avons donc jugé intéressant d'étudier la marge d'erreur de cette approximation par rapport au résultat exact fourni par la méthode retour arrière.
 
-% Tableau erreur
-% Graphe erreur
+Bien que la méthode vorace soit manifestement bien plus rapide, elle repose sur une approximation mathématique du résultat réel. Nous avons donc jugé intéressant d'étudier la marge d'erreur de cette approximation par rapport au résultat exact fourni par la méthode retour arrière. La totalité du tableau est consultable en annexe. Une partie des données est corrompue par le problème d'overflow évoqué précédemment.
 
-% Conclusion erreur
+Le tableau d'erreur à été calculé en confrontant nos résultats à ceux fournis sur Moodle.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.7\textwidth]{spreadsheet/erreurs}
+	\caption{Tableau des erreurs d'approximation des dénombrements, en \%}
+\end{figure}
+
+Dans quelques rares cas, l'approximation s'est approchée du résultat réel avec moins de 1\% d'erreur. Cependant, la tendance générale montre que les résultats approximés sont éloignés du résultat réel (ou que l'algorithme a été mal implémenté, mais ce constat est manifestement partagé par d'autres groupes d'expérience).
 
 \section{Analyse}
 
@@ -192,8 +240,6 @@ Cette méthode a donc une complexité polynomiale, en $ O(|S|^{2}) $.
 
 \subsubsection{Algorithme retour arrière}
 
-%Sans la récursivité, la méthode de base pour trouver une seule extension appartient à $ O (|S| \times |A|) $.
-
 Cette méthode teste toutes les permutations possibles de manière exhaustive, et est donc en temps super-polynomial, appartenant à $ O (|S|!) $.
 
 \subsubsection{Algorithme dynamique}
@@ -204,9 +250,29 @@ Chaque case de cet hypercube est calculée à l'aide d'appels à la décompositi
 
 \subsection{Analyse hybride}
 
+Du fait des multiples variables en jeu (largeur de graphe et nombre de sommets), nous n'avons pas su comment adapter les méthodes d'analyse hybride vues précédemment. Nous avons tout de même tenté d'extraire des tendances des résultats, comme présentées sur les figures 7 et 8.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.7\textwidth]{spreadsheet/graph5}
+	\caption{Regressions linéaires sur 3 échantillons de sommets, algorithme vorace}
+\end{figure}
+
+Les résultats de cet algorithme sont si faibles en temps d'exécution et si disparates qu'utiliser une échelle log-log est gênant pour leur visualisation.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.7\textwidth]{spreadsheet/graph6}
+	\caption{Regressions linéaires sur 2 échantillons de sommets, algorithme retour arrière}
+\end{figure}
+
+Ces graphiques semblent confirmer le comportement polynomial de la méthode vorace, avec une croissance faible, et la complexité super-polynomiale de la méthode de backtracking, avec une croissance très élevée.
+
+\subsection{Discussion}
+
 \subsubsection{Qualité de réponse}
 
-Comme vu précédemment, l'approximation mathématique par l'algorithme vorace rend des solutions éloignées du résultat réel. Cette méthode peut donc seulement être utilisée afin d'avoir un ordre de grandeur rapide et efficace du résultat, et trouve son sens par exemple dans un programme embarqué.
+Comme vu précédemment, l'approximation mathématique par l'algorithme vorace rend des solutions éloignées du résultat réel. Cette méthode peut donc seulement être utilisée afin d'avoir un ordre de grandeur rapide et efficace du résultat, sur des graphes de taille réduite, et trouve son sens par exemple dans un programme embarqué.
 
 L'algorithme retour arrière permet d'obtenir des résultats exacts. Nous supposons aussi que la méthode dynamique fait de même, mais nous ne pouvons malheureusement pas le vérifier.
 
@@ -221,6 +287,7 @@ Quant à la méthode dynamique, elle requiert par définition l'instanciation et
 \subsubsection{Implémentation}
 
 La difficulté d'implémentation des algorithmes vorace et retour arrière a été assez similaire, et moyenne. La méthode vorace requiert des choix plus réfléchis des structures de données à utiliser pour garder l'idée du pseudo-code (mécanisme de file) tout en permettant une certaine flexibilité de manipulation. La recherche d'élément, par exemple, est impossible dans une simple file. De plus, le stockage des prédecesseurs doit tenir compte du fait que le graphe peut avoir perdu de ses sommets, d'où l'intérêt d'une structure mappée.
+Un autre point à souligner concernant l'implémentation de la méthode vorace est le besoin d'utiliser une formule mathématique avec des nombres extrèmement grands, de l'ordre de $10^{19}$. Cela est complètement bloquant avec la majorité des librairies standards, et demande donc la recherche et l'utilisation de librairies tierces plus adaptées.
 
 Le retour arrière présente des problèmes plus conceptuels, sur l'utilisation de la récursion pour parcourir l'arbre de solutions, sans le avoir à le créer. Mais une fois cet écueil franchi, le reste de l'implémentation est simple.
 
@@ -228,16 +295,21 @@ Enfin, la méthode dynamique a posé beaucoup de problèmes sur son implémentat
 
 \section{Conclusion}
 
+À travers cette expérience, qui a consisté en l'étude de l’implémentation en C++ de trois méthodes de dénombrement d'extensions linéaires d'un graphe orienté acyclique, nous avons pu étudier les problématiques posées par les patrons de conception vorace, retour arrière et dynamique.
+
+Les données recueillies après test sur jeux de données de taille variable (10 sommets, largeur 4 à 30 sommets, largeur 10) ont permis de tester les qualités de réponses des méthodes, et leur difficulté d'implémentation.
+
+Malheureusement, cette expérience a été moins bien gérée que la précédente. Le temps demandé par l'implémentation de l'algorithme dynamique, qui ne fonctionne pas encore à ce jour, a largement retardé l'acquisition et l'analyse de résultats.
+
+La constitution d'un nouveau binôme pour la prochaine et dernière expérience veillera à éviter cet écueil majeur.
+
 \section{Bibliographie}
 
 Aucune portion de code de l'implémentation ou de la représentation des résultats n'a été copié. Cependant, diverses inspirations ont permis la réalisation de cette expérience.
 
 \begin{itemize}
-	\item \href{http://msdn.microsoft.com/en-us/library/hh873134.aspx}{Microsoft Developer Network, Walkthrough: Matrix Multiplication}
-	\item \href{http://www.cplusplus.com/reference/vector/vector/}{C++ Reference, Vector class}
-	\item \href{http://www.cplusplus.com/doc/tutorial/arrays/}{C++ Reference, Array class}
-	\item \href{http://www.cplusplus.com/reference/tuple/tuple/}{C++ Reference, Tuple class}
-	\item \href{http://stackoverflow.com/questions/7868936/c-read-file-line-by-line}{Stack Overflow, Réponse de Kerrek SB à la question "Read file line by line"}
+	\item \href{http://msdn.microsoft.com/en-us/library/296az74e.aspx}{Microsoft Developer Network, Integer Limits}
+	\item \href{http://www.cplusplus.com/reference/algorithm/find/}{C++ Reference, Find algorithm}
 	\item Notes de cours "Algorithmes Voraces", Gilles Pesant
 	\item Notes de cours "Algorithmes Dynamiques", Gilles Pesant
 \end{itemize}
