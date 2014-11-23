@@ -48,8 +48,13 @@ public class BlocMarbre {
             print = true;
         }
 
+        // Creation du marbre
+        Marbre marbre = new Marbre();
+
         // Importation du fichier
+        marbre.importer(chemin);
 
         // Benchtest
+        marbre.afficher();
     }
 }
