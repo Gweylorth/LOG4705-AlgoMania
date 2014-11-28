@@ -36,6 +36,19 @@ public class Bloc {
      * La liste des coupes
      */
     private ArrayList<Integer> coupes;
+    /**
+     * Le nombres de classes assignees
+     */
+    private int nbClassesAssignees;
+    /**
+     * La liste des classes
+     */
+    private ArrayList<Integer> classes;
+
+    /**
+     * Le nombre de classes maximum
+     */
+    final private int nbClassesMax = 3;
 
     /**
      * Constructeur public vide d'un bloc par defaut
@@ -45,13 +58,16 @@ public class Bloc {
         this.capacite = 0;
         this.perte = 0;
         this.nbCoupesAssignees = 0;
-        this.coupes = new ArrayList<>();
+        this.coupes = new ArrayList();
+        this.nbClassesAssignees = 0;
+        this.classes = new ArrayList();
     }
 
     /**
+     *
      * Constructeur public d'un bloc vide
      *
-     * @param numero   le numero du bloc
+     * @param numero le numero du bloc
      * @param capacite la capacite du bloc
      */
     public Bloc(int numero, int capacite) {
@@ -59,15 +75,34 @@ public class Bloc {
         this.capacite = capacite;
         this.perte = capacite;
         this.nbCoupesAssignees = 0;
-        this.coupes = new ArrayList<>();
+        this.coupes = new ArrayList();
+        this.nbClassesAssignees = 0;
+        this.classes = new ArrayList();
     }
 
-    public void ajoutCoupe(int numeroCoupe, int longueurCoupe) {
-        if (longueurCoupe <= this.perte) {
-            this.perte -= longueurCoupe;
-            this.nbCoupesAssignees++;
-            this.coupes.add(numeroCoupe);
+    /**
+     *
+     * Ajoute une coupe au bloc.
+     *
+     * @param numeroCoupe le numero de la coupe
+     * @param longueurCoupe la longueur de la coupe
+     * @param classeCoupe la classe de la coupe
+     * @return si la coupe a ete ajoutee au bloc
+     */
+    public boolean ajoutCoupe(int numeroCoupe, int longueurCoupe, int classeCoupe) {
+        if (nbClassesAssignees < nbClassesMax) {
+            if (longueurCoupe <= this.perte) {
+                this.perte -= longueurCoupe;
+                this.nbCoupesAssignees++;
+                this.coupes.add(numeroCoupe);
+                if (!classes.contains(classeCoupe)) {
+                    classes.add(classeCoupe);
+                    nbClassesAssignees++;
+                }
+                return true;
+            }
         }
+        return false;
     }
 
     /**
@@ -168,6 +203,46 @@ public class Bloc {
      */
     public void setCoupes(ArrayList<Integer> coupes) {
         this.coupes = coupes;
+    }
+
+    /**
+     *
+     * Recupere le nombre de classes assignees au bloc.
+     *
+     * @return le nombre de classes assignees
+     */
+    public int getNbClassesAssignees() {
+        return nbClassesAssignees;
+    }
+
+    /**
+     *
+     * Modifie le nombre de coupes assignees au bloc.
+     *
+     * @param nbClassesAssignees le nouveau nombre de classes assignees
+     */
+    public void setNbClassesAssignees(int nbClassesAssignees) {
+        this.nbClassesAssignees = nbClassesAssignees;
+    }
+
+    /**
+     *
+     * Recupere la liste de classes assignees au bloc.
+     *
+     * @return la liste de classes assignees
+     */
+    public ArrayList<Integer> getClasses() {
+        return classes;
+    }
+
+    /**
+     *
+     * Modifie la liste de classes assignees au bloc.
+     *
+     * @param classes la nouvelle liste de classes assignees
+     */
+    public void setClasses(ArrayList<Integer> classes) {
+        this.classes = classes;
     }
 
 }

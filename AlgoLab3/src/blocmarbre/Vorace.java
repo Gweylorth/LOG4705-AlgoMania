@@ -6,6 +6,8 @@
 package blocmarbre;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 
 /**
  *
@@ -22,14 +24,14 @@ public class Vorace {
     private Marbre marbre;
 
     /**
-     * La liste des blocs
+     * La solution
      */
-    private ArrayList<Bloc> listeBlocs;
+    private Solution solution;
 
     /**
-     * Le chrono
+     * La valeur limite de bornage
      */
-    private Chrono temps;
+    final private double bornage = 0.01;
 
     /**
      *
@@ -39,51 +41,89 @@ public class Vorace {
      */
     public Vorace(Marbre marbre) {
         this.marbre = marbre;
-        this.listeBlocs = new ArrayList<>();
-        this.temps = new Chrono();
-    }
-
-    /**
-     * Affiche les resultats.
-     */
-    public void afficher() {
-        // Calcul des pertes
-        int perte = 0;
-        for (Bloc listeBloc : listeBlocs) {
-            perte += listeBloc.getPerte();
-        }
-
-        // Premiere ligne
-        System.out.print(perte);
-        System.out.print(" ");
-        System.out.print(temps.getTemps());
-        System.out.print(" ");
-        System.out.print(listeBlocs.size());
-        System.out.println();
-
-        // Lignes suivantes
-        for (Bloc listeBloc : listeBlocs) {
-            System.out.print(listeBloc.getNumero());
-            System.out.print(" ");
-            System.out.print(listeBloc.getNbCoupesAssignees());
-            // Coupes
-            for (int coupe : listeBloc.getCoupes()) {
-                System.out.print(" ");
-                System.out.print(coupe);
-            }
-            System.out.println();
-        }
+        this.solution = new Solution();
     }
 
     /**
      * Traite l'ensemble des donnees.
      */
-    public void traiter() {
-        // Demarrage du chrono
-        temps.demarrer();
+    public Solution traiter() {
+        // Initialisation des couts
+        ArrayList<Integer> couts = new ArrayList();
+        for (int[] coupe : marbre.getCoupes()) {
+            couts.add(evaluer(coupe));
+        }
 
-        // Arret du chrono
-        temps.arreter();
+        // Tant que la solution n'est pas complete
+        while (true) {
+            // Calcul des bords de la borne
+            int coutMin = Collections.min(couts);
+            int coutMax = Collections.max(couts);
+
+            // Calcul de la borne
+            ArrayList<Integer> RCL = new ArrayList();
+            double alpha = (double) (bornage * randInt(1, 100));
+            int borne = (int) (coutMin + alpha * (coutMax - coutMin));
+
+            // Calcul des meilleures coupes
+            for (int i = 0; i < couts.size(); i++) {
+                if (couts.get(i) <= borne) {
+                    RCL.add(i);
+                }
+            }
+
+            // Choix de la coupe parmi les meilleures coupes
+            int choixCoupe = randInt(0, RCL.size());
+
+            // Reponse pour savoir si la coupe a ete ajoutee
+            boolean reponse = false;
+
+            // Ajout de la coupe dans un bloc existant
+            for (Bloc bloc : solution) {
+                reponse = bloc.ajoutCoupe(choixCoupe, marbre.getCoupes()[choixCoupe][0], marbre.getCoupes()[choixCoupe][1]);
+                if (reponse) {
+                    break;
+                }
+            }
+
+            // Si la coupe n'a pas trouve de bloc libre
+            if (reponse == false) {
+                solution.add(new Bloc(0, 0));
+            }
+
+            // Mettre a jour l'ensemble des coupes
+            // Mettre a jour les couts
+            break;
+        }
+
+        return getSolution();
+    }
+
+    /**
+     *
+     * Evalue le cout d'une coupe.
+     *
+     * @param coupe la coupe a evaluer
+     * @return le cout de la coupe
+     */
+    private int evaluer(int[] coupe) {
+        return 0;
+    }
+
+    /**
+     *
+     * Renvoie un random int dans l'intervale [min, max]
+     *
+     * @param min la borne min
+     * @param max la borne max
+     * @return le random int entre min et max
+     */
+    private int randInt(int min, int max) {
+        Random rand = new Random();
+
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+
+        return randomNum;
     }
 
     /**
@@ -108,41 +148,22 @@ public class Vorace {
 
     /**
      *
-     * Recupere la liste des blocs.
+     * Recupere la solution.
      *
-     * @return la liste des blocs
+     * @return la solution
      */
-    public ArrayList<Bloc> getListeBlocs() {
-        return listeBlocs;
+    public Solution getSolution() {
+        return solution;
     }
 
     /**
      *
-     * Modifie la liste des blocs
+     * Modifie la solution.
      *
-     * @param listeBlocs la nouvelle liste des blocs
+     * @param solution la nouvelle solution
      */
-    public void setListeBlocs(ArrayList<Bloc> listeBlocs) {
-        this.listeBlocs = listeBlocs;
+    public void setSolution(Solution solution) {
+        this.solution = solution;
     }
 
-    /**
-     *
-     * Recupere le chrono
-     *
-     * @return le chrono
-     */
-    public Chrono getTemps() {
-        return temps;
-    }
-
-    /**
-     *
-     * Modifie le chrono
-     *
-     * @param temps le nouveau chrono
-     */
-    public void setTemps(Chrono temps) {
-        this.temps = temps;
-    }
 }

@@ -56,9 +56,55 @@ public class BlocMarbre {
 
         // Benchtest
         // marbre.afficher();
-        // Algorithme vorace
-        Vorace algoVorace = new Vorace(marbre);
-        algoVorace.traiter();
-        algoVorace.afficher();
+        // Resolution du probleme
+        resolutionProbleme(marbre);
+    }
+
+    public static void resolutionProbleme(Marbre marbre) {
+        Chrono temps = new Chrono();
+        Solution optimum = new Solution();
+
+        while (true) {
+            temps.demarrer();
+            Solution solutionTemporaire = new Solution();
+            // Vorace ramdomise
+            Vorace vorace = new Vorace(marbre);
+            solutionTemporaire = vorace.traiter();
+            // Amelioration locale
+            AmeliorationLocale amelioration = new AmeliorationLocale(vorace);
+            solutionTemporaire = amelioration.ameliorer();
+
+            temps.arreter();
+
+            if (solutionTemporaire.getPerte() < optimum.getPerte()) {
+                optimum = solutionTemporaire;
+                afficher(optimum, temps);
+            }
+
+            temps.reset();
+        }
+    }
+
+    public static void afficher(Solution solution, Chrono temps) {
+        // Premiere ligne
+        System.out.print(solution.getPerte());
+        System.out.print(" ");
+        System.out.print(temps.getTemps());
+        System.out.print(" ");
+        System.out.print(solution.size());
+        System.out.println();
+
+        // Lignes suivantes
+        for (Bloc bloc : solution) {
+            System.out.print(bloc.getNumero());
+            System.out.print(" ");
+            System.out.print(bloc.getNbCoupesAssignees());
+            // Coupes
+            for (int coupe : bloc.getCoupes()) {
+                System.out.print(" ");
+                System.out.print(coupe);
+            }
+            System.out.println();
+        }
     }
 }
