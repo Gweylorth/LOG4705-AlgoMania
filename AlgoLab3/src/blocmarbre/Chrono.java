@@ -36,7 +36,7 @@ public class Chrono {
      * Demarre le chronometre.
      */
     public void demarrer() {
-        memoire = java.lang.System.nanoTime();
+        memoire = java.lang.System.currentTimeMillis();
     }
 
     /**
@@ -51,7 +51,7 @@ public class Chrono {
      * Arrete le chronometre.
      */
     public void arreter() {
-        this.temps = java.lang.System.nanoTime() - memoire;
+        this.temps = java.lang.System.currentTimeMillis() - memoire;
         this.memoire = 0;
     }
 
@@ -59,7 +59,7 @@ public class Chrono {
      * Affiche le temps du chronometre.
      */
     public void afficher() {
-        System.out.println("Temps (en ns) : " + temps);
+        System.out.println("Temps (en ms) : " + temps);
     }
 
     /**

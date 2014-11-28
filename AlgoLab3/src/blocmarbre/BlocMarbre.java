@@ -55,6 +55,10 @@ public class BlocMarbre {
         marbre.importer(chemin);
 
         // Benchtest
-        marbre.afficher();
+        // marbre.afficher();
+        // Algorithme vorace
+        Vorace algoVorace = new Vorace(marbre);
+        algoVorace.traiter();
+        algoVorace.afficher();
     }
 }
