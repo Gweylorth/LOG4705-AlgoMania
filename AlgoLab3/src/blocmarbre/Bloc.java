@@ -17,6 +17,11 @@ import java.util.ArrayList;
 public class Bloc {
 
     /**
+     * Le marbre original
+     */
+    private Marbre marbre;
+
+    /**
      * Le numero du bloc
      */
     private int numero;
@@ -51,12 +56,17 @@ public class Bloc {
     final private int nbClassesMax = 3;
 
     /**
-     * Constructeur public vide d'un bloc par defaut
+     *
+     * Constructeur public d'un bloc vide
+     *
+     * @param numero le numero du bloc
+     * @param capacite la capacite du bloc
      */
-    public Bloc() {
-        this.numero = 0;
-        this.capacite = 0;
-        this.perte = 0;
+    public Bloc(Marbre marbre, int numero, int capacite) {
+        this.numero = numero;
+        this.capacite = capacite;
+        this.perte = capacite;
+        this.marbre = marbre;
         this.nbCoupesAssignees = 0;
         this.coupes = new ArrayList();
         this.nbClassesAssignees = 0;
@@ -64,20 +74,10 @@ public class Bloc {
     }
 
     /**
-     *
-     * Constructeur public d'un bloc vide
-     *
-     * @param numero le numero du bloc
-     * @param capacite la capacite du bloc
+     * Constructeur public vide d'un bloc par defaut
      */
-    public Bloc(int numero, int capacite) {
-        this.numero = numero;
-        this.capacite = capacite;
-        this.perte = capacite;
-        this.nbCoupesAssignees = 0;
-        this.coupes = new ArrayList();
-        this.nbClassesAssignees = 0;
-        this.classes = new ArrayList();
+    public Bloc(Marbre marbre) {
+        this(marbre, 0, 0);
     }
 
     /**
@@ -85,24 +85,56 @@ public class Bloc {
      * Ajoute une coupe au bloc.
      *
      * @param numeroCoupe le numero de la coupe
-     * @param longueurCoupe la longueur de la coupe
-     * @param classeCoupe la classe de la coupe
      * @return si la coupe a ete ajoutee au bloc
      */
-    public boolean ajoutCoupe(int numeroCoupe, int longueurCoupe, int classeCoupe) {
-        if (nbClassesAssignees < nbClassesMax) {
-            if (longueurCoupe <= this.perte) {
-                this.perte -= longueurCoupe;
-                this.nbCoupesAssignees++;
-                this.coupes.add(numeroCoupe);
-                if (!classes.contains(classeCoupe)) {
-                    classes.add(classeCoupe);
-                    nbClassesAssignees++;
-                }
-                return true;
+    public boolean ajoutCoupe(int numeroCoupe) {
+
+        Integer longueurCoupe = this.marbre.getCoupes()[numeroCoupe][0];
+        Integer classeCoupe = this.marbre.getCoupes()[numeroCoupe][1];
+
+        if (nbClassesAssignees >= nbClassesMax || longueurCoupe > this.perte) {
+            return false;
+        }
+
+        this.perte -= longueurCoupe;
+        this.nbCoupesAssignees++;
+        this.coupes.add(numeroCoupe);
+
+        if (!classes.contains(classeCoupe)) {
+            classes.add(classeCoupe);
+            nbClassesAssignees++;
+        }
+
+        return true;
+    }
+
+    public boolean retraitCoupe(Integer numeroCoupe) {
+        if (this.nbCoupesAssignees == 0 || !this.coupes.contains(numeroCoupe)) {
+            return false;
+        }
+
+        Integer longueurCoupe = this.marbre.getCoupes()[numeroCoupe][0];
+        Integer classeCoupe = this.marbre.getCoupes()[numeroCoupe][1];
+
+        this.perte += longueurCoupe;
+        this.nbCoupesAssignees--;
+        this.coupes.remove(numeroCoupe);
+
+        // Si cette coupe est la seule de sa classe appliquee a ce bloc, retirer la classe
+        boolean doitRetirerClasse = true;
+        for (int c : this.coupes) {
+            Integer classe = this.marbre.getCoupes()[c][1];
+            if (classe == classeCoupe) {
+                doitRetirerClasse = false;
+                break;
             }
         }
-        return false;
+        if (doitRetirerClasse) {
+            this.classes.remove(classeCoupe);
+            this.nbClassesAssignees--;
+        }
+
+        return true;
     }
 
     /**

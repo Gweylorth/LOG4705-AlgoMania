@@ -80,7 +80,7 @@ public class Vorace {
 
             // Ajout de la coupe dans un bloc existant
             for (Bloc bloc : solution) {
-                reponse = bloc.ajoutCoupe(choixCoupe, marbre.getCoupes()[choixCoupe][0], marbre.getCoupes()[choixCoupe][1]);
+                reponse = bloc.ajoutCoupe(choixCoupe);
                 if (reponse) {
                     break;
                 }
@@ -88,7 +88,7 @@ public class Vorace {
 
             // Si la coupe n'a pas trouve de bloc libre
             if (reponse == false) {
-                solution.add(new Bloc(0, 0));
+                solution.add(new Bloc(this.marbre));
             }
 
             // Mettre a jour l'ensemble des coupes
