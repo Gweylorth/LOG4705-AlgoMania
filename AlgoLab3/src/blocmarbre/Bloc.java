@@ -94,7 +94,7 @@ public class Bloc {
         int difference = 0;
 
         // Tant que la perte est superieure a la difference, reduire le bloc
-        while (perte > difference) {
+        while (perte > marbre.getCapaciteBlocs()[index] - marbre.getCapaciteBlocs()[index - j]) {
             difference = marbre.getCapaciteBlocs()[index] - marbre.getCapaciteBlocs()[index - j];
             if (index - j < 1) {
                 break;
@@ -163,6 +163,26 @@ public class Bloc {
         }
 
         return true;
+    }
+
+    /**
+     *
+     * Recupere l'ensemble de donnees
+     *
+     * @return l'ensemble de donnees
+     */
+    public Marbre getMarbre() {
+        return marbre;
+    }
+
+    /**
+     *
+     * Modifie l'ensemble de donnees
+     *
+     * @param marbre le nouvel ensemble de donnees
+     */
+    public void setMarbre(Marbre marbre) {
+        this.marbre = marbre;
     }
 
     /**
