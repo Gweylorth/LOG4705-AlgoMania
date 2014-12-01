@@ -54,8 +54,6 @@ public class BlocMarbre {
         // Importation du fichier
         marbre.importer(chemin);
 
-        // Benchtest
-        // marbre.afficher();
         // Resolution du probleme
         resolutionProbleme(marbre);
     }
@@ -66,14 +64,15 @@ public class BlocMarbre {
 
         while (true) {
             temps.demarrer();
-            Solution solutionTemporaire = new Solution();
             // Vorace ramdomise
             Vorace vorace = new Vorace(marbre);
-            solutionTemporaire = vorace.traiter();
-            // Amelioration locale
-            AmeliorationLocale amelioration = new AmeliorationLocale(vorace);
-            solutionTemporaire = amelioration.ameliorer();
+            vorace.traiter();
 
+            Solution solutionTemporaire = vorace.getSolution();
+
+            // Amelioration locale
+            // AmeliorationLocale amelioration = new AmeliorationLocale(vorace);
+            // Solution solutionTemporaire = amelioration.ameliorer();
             temps.arreter();
 
             if (solutionTemporaire.getPerte() < optimum.getPerte()) {
@@ -106,5 +105,7 @@ public class BlocMarbre {
             }
             System.out.println();
         }
+
+        System.out.println();
     }
 }

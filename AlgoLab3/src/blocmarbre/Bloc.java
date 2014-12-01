@@ -85,6 +85,30 @@ public class Bloc {
     }
 
     /**
+     * Reduit la taille du bloc si possible
+     */
+    public void reduire() {
+        // Initialisation des parametres
+        int index = numero;
+        int j = 0;
+        int difference = 0;
+
+        // Tant que la perte est superieure a la difference, reduire le bloc
+        while (perte > difference) {
+            difference = marbre.getCapaciteBlocs()[index] - marbre.getCapaciteBlocs()[index - j];
+            if (index - j < 1) {
+                break;
+            }
+            j++;
+        }
+
+        // MAJ des parametres
+        perte -= difference;
+        numero = index - j;
+        capacite = marbre.getCapaciteBlocs()[numero];
+    }
+
+    /**
      *
      * Ajoute une coupe au bloc.
      *

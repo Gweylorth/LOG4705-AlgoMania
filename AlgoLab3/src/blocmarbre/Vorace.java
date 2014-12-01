@@ -6,6 +6,7 @@
 package blocmarbre;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
@@ -47,42 +48,47 @@ public class Vorace {
     /**
      * Traite l'ensemble des donnees.
      *
-     * @return une solution vorace
      */
-    public Solution traiter() {
+    public void traiter() {
         // Initialisation des couts
         ArrayList<Integer> couts = new ArrayList<>();
-        for (int[] coupe : marbre.getCoupes()) {
+        // Deep copie des coupes
+        int[][] coupes = copy(marbre.getCoupes());
+        // Calcul du cout de chaque coupe
+        for (int[] coupe : coupes) {
             couts.add(evaluer(coupe));
         }
 
         // Tant que la solution n'est pas complete
-        while (true) {
+        int compteur = 0;
+        while (compteur < coupes.length) {
+            compteur++;
             // Calcul des bords de la borne
-            int coutMin = Collections.min(couts);
+            int coutMin = minimum(couts);
             int coutMax = Collections.max(couts);
 
             // Calcul de la borne
             ArrayList<Integer> RCL = new ArrayList<>();
-            double alpha = bornage * randInt(1, 100);
+            double alpha = bornage * randInt(1, 10);
             int borne = (int) (coutMin + alpha * (coutMax - coutMin));
 
             // Calcul des meilleures coupes
             for (int i = 0; i < couts.size(); i++) {
-                if (couts.get(i) <= borne) {
+                int cout = couts.get(i);
+                if (cout <= borne && cout > 0) {
                     RCL.add(i);
                 }
             }
 
             // Choix de la coupe parmi les meilleures coupes
-            int choixCoupe = randInt(0, RCL.size());
+            int choixCoupe = randInt(0, RCL.size() - 1);
 
             // Reponse pour savoir si la coupe a ete ajoutee
             boolean reponse = false;
 
             // Ajout de la coupe dans un bloc existant
             for (Bloc bloc : solution) {
-                reponse = bloc.ajoutCoupe(choixCoupe);
+                reponse = bloc.ajoutCoupe(RCL.get(choixCoupe));
                 if (reponse) {
                     break;
                 }
@@ -90,15 +96,65 @@ public class Vorace {
 
             // Si la coupe n'a pas trouve de bloc libre
             if (reponse == false) {
-                solution.add(new Bloc(this.marbre));
+                int[] capacite = this.marbre.getCapaciteBlocs();
+                solution.add(new Bloc(this.marbre, capacite.length - 1, capacite[capacite.length - 1]));
+                solution.get(solution.size() - 1).ajoutCoupe(RCL.get(choixCoupe));
             }
 
             // Mettre a jour l'ensemble des coupes
+            coupes[RCL.get(choixCoupe)][0] = -1;
             // Mettre a jour les couts
-            break;
+            couts.clear();
+            for (int[] coupe : coupes) {
+                couts.add(evaluer(coupe));
+            }
         }
 
-        return getSolution();
+        // Reduire les blocs
+        reduire();
+    }
+
+    /**
+     * Reduit les blocs dans la solution
+     */
+    private void reduire() {
+        for (Bloc bloc : solution) {
+            bloc.reduire();
+        }
+    }
+
+    /**
+     *
+     * Copie en deep copy un tableau en 2D
+     *
+     * @param input le tableau a copier
+     * @return le tableau copie
+     */
+    public int[][] copy(int[][] input) {
+        int[][] target = new int[input.length][];
+        for (int i = 0; i < input.length; i++) {
+            target[i] = Arrays.copyOf(input[i], input[i].length);
+        }
+        return target;
+    }
+
+    /**
+     *
+     * Renvoie le minimum positif d'une liste
+     *
+     * @param couts les differents couts
+     * @return le minimum positif
+     */
+    public int minimum(ArrayList<Integer> couts) {
+        int minimum = Collections.max(couts);
+
+        for (int cout : couts) {
+            if (minimum > cout && cout > 0) {
+                minimum = cout;
+            }
+        }
+
+        return minimum;
     }
 
     /**
@@ -109,23 +165,23 @@ public class Vorace {
      * @return le cout de la coupe
      */
     private int evaluer(int[] coupe) {
-        return 0;
+        return coupe[0];
     }
 
     /**
      *
-     * Renvoie un random int dans l'intervale [min, max]
+     * Renvoie un random int positif dans l'intervale [min, max]
      *
      * @param min la borne min
      * @param max la borne max
-     * @return le random int entre min et max
+     * @return le random int positif entre min et max
      */
     private int randInt(int min, int max) {
         Random rand = new Random();
 
         int randomNum = rand.nextInt((max - min) + 1) + min;
 
-        return randomNum;
+        return Math.max(0, randomNum);
     }
 
     /**
