@@ -46,10 +46,12 @@ public class Vorace {
 
     /**
      * Traite l'ensemble des donnees.
+     *
+     * @return une solution vorace
      */
     public Solution traiter() {
         // Initialisation des couts
-        ArrayList<Integer> couts = new ArrayList();
+        ArrayList<Integer> couts = new ArrayList<>();
         for (int[] coupe : marbre.getCoupes()) {
             couts.add(evaluer(coupe));
         }
@@ -61,8 +63,8 @@ public class Vorace {
             int coutMax = Collections.max(couts);
 
             // Calcul de la borne
-            ArrayList<Integer> RCL = new ArrayList();
-            double alpha = (double) (bornage * randInt(1, 100));
+            ArrayList<Integer> RCL = new ArrayList<>();
+            double alpha = bornage * randInt(1, 100);
             int borne = (int) (coutMin + alpha * (coutMax - coutMin));
 
             // Calcul des meilleures coupes

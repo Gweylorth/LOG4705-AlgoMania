@@ -1,11 +1,12 @@
 package blocmarbre;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Classe AmeliorationLocale, algorithme de recherche d'un optimum local par recherche de voisinage
+ * Classe AmeliorationLocale, algorithme de recherche d'un optimum local par
+ * recherche de voisinage
+ *
  * @author Gwenegan
  * @version 1.0
  */
@@ -18,8 +19,9 @@ public class AmeliorationLocale {
     }
 
     /**
-     * Genere une solution vorace, puis parcourt l'ensemble de ses solutions voisines
-     * pour trouver la meilleure
+     * Genere une solution vorace, puis parcourt l'ensemble de ses solutions
+     * voisines pour trouver la meilleure
+     *
      * @return Solution optimale localement
      */
     public Solution ameliorer() {
@@ -39,6 +41,7 @@ public class AmeliorationLocale {
 
     /**
      * Construit les solutions voisines de la solution s0
+     *
      * @param s0 Solution originale
      * @return Ensemble des solutions voisines
      */
@@ -50,8 +53,8 @@ public class AmeliorationLocale {
         for (Integer coupe = 0; coupe <= this.vorace.getMarbre().getNbCoupes(); coupe++) {
             for (Bloc bloc : s0) {
                 si = (Solution) s0.clone();
-                if (! bloc.getCoupes().contains(coupe)) {
-                    if (!s0.retraitCoupe(coupe)){
+                if (!bloc.getCoupes().contains(coupe)) {
+                    if (!s0.retraitCoupe(coupe)) {
                         continue;
                     }
                     if (!bloc.ajoutCoupe(coupe)) {

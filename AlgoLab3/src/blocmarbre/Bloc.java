@@ -6,6 +6,7 @@
 package blocmarbre;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  *
@@ -59,7 +60,8 @@ public class Bloc {
      *
      * Constructeur public d'un bloc vide
      *
-     * @param numero le numero du bloc
+     * @param marbre   l'ensmeble des donnees
+     * @param numero   le numero du bloc
      * @param capacite la capacite du bloc
      */
     public Bloc(Marbre marbre, int numero, int capacite) {
@@ -68,13 +70,15 @@ public class Bloc {
         this.perte = capacite;
         this.marbre = marbre;
         this.nbCoupesAssignees = 0;
-        this.coupes = new ArrayList();
+        this.coupes = new ArrayList<>();
         this.nbClassesAssignees = 0;
-        this.classes = new ArrayList();
+        this.classes = new ArrayList<>();
     }
 
     /**
      * Constructeur public vide d'un bloc par defaut
+     *
+     * @param marbre l'ensemble des donnees
      */
     public Bloc(Marbre marbre) {
         this(marbre, 0, 0);
@@ -124,7 +128,7 @@ public class Bloc {
         boolean doitRetirerClasse = true;
         for (int c : this.coupes) {
             Integer classe = this.marbre.getCoupes()[c][1];
-            if (classe == classeCoupe) {
+            if (Objects.equals(classe, classeCoupe)) {
                 doitRetirerClasse = false;
                 break;
             }
