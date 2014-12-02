@@ -11,6 +11,16 @@ import java.util.ArrayList;
  */
 public class Solution extends ArrayList<Bloc> {
 
+    public Solution () {
+        super();
+    }
+
+    public Solution (Solution origin) {
+        for (Bloc bloc : origin) {
+            this.add(new Bloc(bloc));
+        }
+    }
+
     /**
      * Retourne la perte totale des blocs d'une solution
      *

@@ -1,5 +1,6 @@
 package blocmarbre;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,24 +20,27 @@ public class AmeliorationLocale {
     }
 
     /**
-     * Genere une solution vorace, puis parcourt l'ensemble de ses solutions
+     * A partir d'une solution vorace, parcourt l'ensemble de ses solutions
      * voisines pour trouver la meilleure
      *
      * @return Solution optimale localement
      */
-    public Solution ameliorer() {
-        Solution si = this.vorace.getSolution();
-        Set<Solution> Vs = voisinage(si);
+    public Solution ameliorer(Solution solution) {
+        Set<Solution> Vs = voisinage(solution);
 
         for (Solution s : Vs) {
-            if (s.getPerte() < si.getPerte()) {
-                si = s;
+            if (s.getPerte() < solution.getPerte()) {
+                solution = s;
             } else {
                 continue;
             }
         }
 
-        return si;
+        return solution;
+    }
+
+    public Solution ameliorer() {
+        return this.ameliorer(this.vorace.getSolution());
     }
 
     /**
@@ -49,12 +53,14 @@ public class AmeliorationLocale {
         HashSet<Solution> set = new HashSet<>();
 
         Solution si;
+        Bloc bloc;
 
-        for (Integer coupe = 0; coupe <= this.vorace.getMarbre().getNbCoupes(); coupe++) {
-            for (Bloc bloc : s0) {
-                si = (Solution) s0.clone();
+        for (Integer coupe = 0; coupe < this.vorace.getMarbre().getNbCoupes(); coupe++) {
+            for (int i = 0; i < s0.size(); i++) {
+                si = new Solution(s0);
+                bloc = si.get(i);
                 if (!bloc.getCoupes().contains(coupe)) {
-                    if (!s0.retraitCoupe(coupe)) {
+                    if (!si.retraitCoupe(coupe)) {
                         continue;
                     }
                     if (!bloc.ajoutCoupe(coupe)) {

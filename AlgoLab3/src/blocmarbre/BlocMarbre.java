@@ -23,6 +23,7 @@ public class BlocMarbre {
     public static void main(String[] args) throws FileNotFoundException {
         // Recuperation des arguments
         if (args.length < 3) {
+            System.out.println("Not enough args.");
             return;
         }
 
@@ -75,10 +76,13 @@ public class BlocMarbre {
             vorace.traiter();
 
             Solution solutionTemporaire = vorace.getSolution();
+            System.out.println("Perte originale : " + solutionTemporaire.getPerte());
 
             // Amelioration locale
-            // AmeliorationLocale amelioration = new AmeliorationLocale(vorace);
-            // Solution solutionTemporaire = amelioration.ameliorer();
+            AmeliorationLocale amelioration = new AmeliorationLocale(vorace);
+            solutionTemporaire = amelioration.ameliorer(solutionTemporaire);
+            System.out.println("Perte apres voisinage : " + solutionTemporaire.getPerte());
+            System.out.flush();
             temps.arreter();
 
             if (solutionTemporaire.getPerte() < optimum.getPerte()) {
@@ -101,22 +105,19 @@ public class BlocMarbre {
      */
     public static void afficher(Solution solution, Chrono temps) {
         // Premiere ligne
-        System.out.print(solution.getPerte());
-        System.out.print(" ");
-        System.out.print(temps.getTemps());
-        System.out.print(" ");
-        System.out.print(solution.size());
+        System.out.print("Perte : " + solution.getPerte() + " / ");
+        System.out.print("Temps : " + temps.getTemps() + " / ");
+        System.out.print("Taille : " + solution.size());
         System.out.println();
 
         // Lignes suivantes
         for (Bloc bloc : solution) {
-            System.out.print(bloc.getNumero());
-            System.out.print(" ");
-            System.out.print(bloc.getNbCoupesAssignees());
+            System.out.print("\t");
+            System.out.println("Bloc " + bloc.getNumero() + " : " + bloc.getNbCoupesAssignees() + " coupe(s)");
+            System.out.print("\t\t");
             // Coupes
             for (int coupe : bloc.getCoupes()) {
-                System.out.print(" ");
-                System.out.print(coupe);
+                System.out.print(coupe + " ");
             }
             System.out.println();
         }

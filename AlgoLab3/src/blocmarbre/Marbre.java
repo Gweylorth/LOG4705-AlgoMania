@@ -132,7 +132,7 @@ public class Marbre {
                     return;
                 }
             }
-        } // Si le fichier n'est pas trouve, renvoie l'erreur. // Si le fichier n'est pas trouve, renvoie l'erreur. // Si le fichier n'est pas trouve, renvoie l'erreur. // Si le fichier n'est pas trouve, renvoie l'erreur.
+        } // Si le fichier n'est pas trouve, renvoie l'erreur.
         catch (FileNotFoundException e) {
             System.err.println(e.toString());
         }

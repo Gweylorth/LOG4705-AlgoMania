@@ -85,6 +85,18 @@ public class Bloc {
     }
 
     /**
+     * Constructeur par deep copy de tabarnak
+     * @param origin
+     */
+    public Bloc (Bloc origin) {
+        this(origin.getMarbre(), origin.getNumero(), origin.getCapacite());
+        this.nbCoupesAssignees = origin.getNbCoupesAssignees();
+        this.nbClassesAssignees = origin.getNbClassesAssignees();
+        this.coupes = new ArrayList<>(origin.getCoupes());
+        this.classes = new ArrayList<>(origin.getClasses());
+    }
+
+    /**
      * Reduit la taille du bloc si possible
      */
     public void reduire() {
