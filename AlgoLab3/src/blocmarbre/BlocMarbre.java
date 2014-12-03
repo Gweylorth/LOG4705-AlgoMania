@@ -87,7 +87,8 @@ public class BlocMarbre {
 
             if (solutionTemporaire.getPerte() < optimum.getPerte()) {
                 optimum = solutionTemporaire;
-                afficher(optimum, temps);
+                // afficher(optimum, temps);
+                afficherPropre(optimum, temps);
                 // afficherLongueur(optimum, temps);
                 // afficherPerte(optimum, temps);
             }
@@ -98,12 +99,12 @@ public class BlocMarbre {
 
     /**
      *
-     * Affiche la solution
+     * Affiche la solution proprement.
      *
      * @param solution la solution
      * @param temps    le chrono
      */
-    public static void afficher(Solution solution, Chrono temps) {
+    public static void afficherPropre(Solution solution, Chrono temps) {
         // Premiere ligne
         System.out.print("Perte : " + solution.getPerte() + " / ");
         System.out.print("Temps : " + temps.getTemps() + " / ");
@@ -127,7 +128,37 @@ public class BlocMarbre {
 
     /**
      *
-     * Affiche la solution en fonction des longueurs de coupes
+     * Affiche la solution comme dit dans l'enonce.
+     *
+     * @param solution la solution
+     * @param temps    le chrono
+     */
+    public static void afficher(Solution solution, Chrono temps) {
+        // Premiere ligne
+        System.out.print(solution.getPerte());
+        System.out.print(" ");
+        System.out.print(temps.getTemps());
+        System.out.print(" ");
+        System.out.print(solution.size());
+        System.out.println();
+        // Lignes suivantes
+        for (Bloc bloc : solution) {
+            System.out.print(bloc.getNumero());
+            System.out.print(" ");
+            System.out.print(bloc.getNbCoupesAssignees());
+            // Coupes
+            for (int coupe : bloc.getCoupes()) {
+                System.out.print(" ");
+                System.out.print(coupe);
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    /**
+     *
+     * Affiche la solution en fonction des longueurs de coupes.
      *
      * @param solution la solution
      * @param temps    le chrono
@@ -159,7 +190,7 @@ public class BlocMarbre {
 
     /**
      *
-     * Affiche la solution en fonction des pertes
+     * Affiche la solution en fonction des pertes.
      *
      * @param solution la solution
      * @param temps    le chrono
