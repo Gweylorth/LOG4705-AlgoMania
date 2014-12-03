@@ -1,6 +1,5 @@
 package blocmarbre;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +12,7 @@ import java.util.Set;
  */
 public class AmeliorationLocale {
 
-    private Vorace vorace;
+    private final Vorace vorace;
 
     public AmeliorationLocale(Vorace v) {
         this.vorace = v;
@@ -23,6 +22,7 @@ public class AmeliorationLocale {
      * A partir d'une solution vorace, parcourt l'ensemble de ses solutions
      * voisines pour trouver la meilleure
      *
+     * @param solution la solution a ameliorer
      * @return Solution optimale localement
      */
     public Solution ameliorer(Solution solution) {

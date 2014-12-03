@@ -76,54 +76,25 @@ public class BlocMarbre {
             vorace.traiter();
 
             Solution solutionTemporaire = vorace.getSolution();
-            System.out.println("Perte originale : " + solutionTemporaire.getPerte());
+           // System.out.println("Perte originale : " + solutionTemporaire.getPerte());
 
             // Amelioration locale
             AmeliorationLocale amelioration = new AmeliorationLocale(vorace);
             solutionTemporaire = amelioration.ameliorer(solutionTemporaire);
-            System.out.println("Perte apres voisinage : " + solutionTemporaire.getPerte());
-            System.out.flush();
+         //   System.out.println("Perte apres voisinage : " + solutionTemporaire.getPerte());
+            //   System.out.flush();
             temps.arreter();
 
             if (solutionTemporaire.getPerte() < optimum.getPerte()) {
                 optimum = solutionTemporaire;
-                // afficher(optimum, temps);
-                afficherPropre(optimum, temps);
+                afficher(optimum, temps);
+                // afficherPropre(optimum, temps);
                 // afficherLongueur(optimum, temps);
                 // afficherPerte(optimum, temps);
             }
 
             temps.reset();
         }
-    }
-
-    /**
-     *
-     * Affiche la solution proprement.
-     *
-     * @param solution la solution
-     * @param temps    le chrono
-     */
-    public static void afficherPropre(Solution solution, Chrono temps) {
-        // Premiere ligne
-        System.out.print("Perte : " + solution.getPerte() + " / ");
-        System.out.print("Temps : " + temps.getTemps() + " / ");
-        System.out.print("Taille : " + solution.size());
-        System.out.println();
-
-        // Lignes suivantes
-        for (Bloc bloc : solution) {
-            System.out.print("\t");
-            System.out.println("Bloc " + bloc.getNumero() + " : " + bloc.getNbCoupesAssignees() + " coupe(s)");
-            System.out.print("\t\t");
-            // Coupes
-            for (int coupe : bloc.getCoupes()) {
-                System.out.print(coupe + " ");
-            }
-            System.out.println();
-        }
-
-        System.out.println();
     }
 
     /**
@@ -153,6 +124,35 @@ public class BlocMarbre {
             }
             System.out.println();
         }
+        System.out.println();
+    }
+
+    /**
+     *
+     * Affiche la solution proprement.
+     *
+     * @param solution la solution
+     * @param temps    le chrono
+     */
+    public static void afficherPropre(Solution solution, Chrono temps) {
+        // Premiere ligne
+        System.out.print("Perte : " + solution.getPerte() + " / ");
+        System.out.print("Temps : " + temps.getTemps() + " / ");
+        System.out.print("Taille : " + solution.size());
+        System.out.println();
+
+        // Lignes suivantes
+        for (Bloc bloc : solution) {
+            System.out.print("\t");
+            System.out.println("Bloc " + bloc.getNumero() + " : " + bloc.getNbCoupesAssignees() + " coupe(s)");
+            System.out.print("\t\t");
+            // Coupes
+            for (int coupe : bloc.getCoupes()) {
+                System.out.print(coupe + " ");
+            }
+            System.out.println();
+        }
+
         System.out.println();
     }
 
