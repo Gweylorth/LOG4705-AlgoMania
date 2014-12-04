@@ -2,6 +2,7 @@ package blocmarbre;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Random;
 
 /**
  * Classe AmeliorationLocale, algorithme de recherche d'un optimum local par
@@ -13,9 +14,14 @@ import java.util.Set;
 public class AmeliorationLocale {
 
     private final Vorace vorace;
+    private final Random random;
 
-    public AmeliorationLocale(Vorace v) {
+    private static final int MAX_ESSAIS = 10;
+
+    public AmeliorationLocale(Vorace v)
+    {
         this.vorace = v;
+        this.random = new Random();
     }
 
     /**
@@ -27,8 +33,10 @@ public class AmeliorationLocale {
      */
     public Solution ameliorer(Solution solution) {
         Set<Solution> Vs = voisinage(solution);
+        // System.out.println("Set size : " + Vs.size());
 
         for (Solution s : Vs) {
+            System.out.println(s.getPerte());
             if (s.getPerte() < solution.getPerte()) {
                 solution = s;
             } else {
@@ -50,27 +58,45 @@ public class AmeliorationLocale {
      * @return Ensemble des solutions voisines
      */
     private HashSet<Solution> voisinage(Solution s0) {
+        // Ensemble de solutions voisines
         HashSet<Solution> set = new HashSet<>();
 
-        Solution si;
-        Bloc bloc;
+        Solution si = s0;
+        Bloc bloc1, bloc2;
 
-        for (Integer coupe = 0; coupe < this.vorace.getMarbre().getNbCoupes(); coupe++) {
-            for (int i = 0; i < s0.size(); i++) {
-                si = new Solution(s0);
-                bloc = si.get(i);
-                if (!bloc.getCoupes().contains(coupe)) {
-                    if (!si.retraitCoupe(coupe)) {
-                        continue;
-                    }
-                    if (!bloc.ajoutCoupe(coupe)) {
-                        continue;
-                    }
-                    set.add(si);
-                }
+        // Essais successifs rates
+        int essais = 0;
+        while(essais < MAX_ESSAIS) {
+            // Copie de la derniere solution
+            si = new Solution(si);
+            // On prend deux blocs au pif dans cette solution
+            bloc1 = si.get(this.random.nextInt(si.size()));
+            bloc2 = si.get(this.random.nextInt(si.size()));
+
+            // On regarde si le bloc a bien au moins une coupe, qu'on recupere
+            if (bloc1.getCoupes().size() <= 0) {
+                essais++;
+                continue;
             }
-        }
+            int randomCoupe = bloc1.getCoupes().get(this.random.nextInt(bloc1.getCoupes().size()));
 
+            // On retire la coupe du bloc. Si ca foire, on laisse tomber cette iteration
+            if (!bloc1.retraitCoupe(randomCoupe)) {
+                essais++;
+                continue;
+            }
+
+            // On ajoute la coupe retiree au deuxieme bloc. Si ca foire, on la remet au bloc original et on reitere
+            if (!bloc2.ajoutCoupe(randomCoupe)) {
+                bloc1.ajoutCoupe(randomCoupe);
+                essais++;
+                continue;
+            }
+
+            // Si tout est ok, on garde cette solution, et on reprend a 0 erreur successive
+            essais = 0;
+            set.add(si);
+        }
         return set;
     }
 }

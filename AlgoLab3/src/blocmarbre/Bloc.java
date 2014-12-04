@@ -85,7 +85,7 @@ public class Bloc {
     }
 
     /**
-     * Constructeur par deep copy de tabarnak
+     * Constructeur par deep copy
      * @param origin
      */
     public Bloc (Bloc origin) {
