@@ -122,11 +122,11 @@ public class Vorace {
      * @return le tableau copie
      */
     public int[][] copie(int[][] input) {
-        int[][] target = new int[input.length][];
+        int[][] cible = new int[input.length][];
         for (int i = 0; i < input.length; i++) {
-            target[i] = Arrays.copyOf(input[i], input[i].length);
+            cible[i] = Arrays.copyOf(input[i], input[i].length);
         }
-        return target;
+        return cible;
     }
 
     /**

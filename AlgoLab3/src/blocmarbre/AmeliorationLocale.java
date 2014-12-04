@@ -1,5 +1,6 @@
 package blocmarbre;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Random;
@@ -92,19 +93,18 @@ public class AmeliorationLocale {
             // Copie de la derniere solution
             solutionTemporaire = new Solution(solutionTemporaire);
 
-            // Tire des nombres random
+            // Recupere un bloc au hasard
             rand[0] = new Random().nextInt(solutionTemporaire.size());
-            rand[1] = new Random().nextInt(solutionTemporaire.size());
-            while (rand[0] == rand[1]) {
-                rand[1] = new Random().nextInt(solutionTemporaire.size());
-            }
-
-            // Recupere deux blocs differents au hasard
             bloc[0] = solutionTemporaire.get(rand[0]);
-            bloc[1] = solutionTemporaire.get(rand[1]);
 
             // Recupere un numero au hasard
-            int randomCoupe = bloc[0].getCoupes().get(new Random().nextInt(bloc[0].getCoupes().size()));
+            if (bloc[0].getCoupes().isEmpty()) {
+                solutionTemporaire.remove(rand[0]);
+                essai++;
+                continue;
+            }
+            int numeroCoupe = new Random().nextInt(bloc[0].getCoupes().size());
+            int randomCoupe = bloc[0].getCoupes().get(numeroCoupe);
 
             // Retire la coupe du bloc 0
             // Si echec, remonte au debut
@@ -112,6 +112,30 @@ public class AmeliorationLocale {
                 essai++;
                 continue;
             }
+
+            // Construit une liste de blocs potentiels
+            ArrayList<Integer> blocsPotentiels = new ArrayList<>();
+            int longueurRandomCoupe = bloc[0].getMarbre().getCoupes()[randomCoupe][0];
+            for (int i = 0; i < solutionTemporaire.size(); i++) {
+                if (i != rand[0]) {
+                    if (solutionTemporaire.get(i).getPerte() >= longueurRandomCoupe) {
+                        blocsPotentiels.add(i);
+                    }
+                }
+            }
+            // Si aucun bloc potentiel, remonte au debut
+            if (blocsPotentiels.isEmpty()) {
+                essai++;
+                continue;
+            }
+            // Recupere un bloc potentiel ou la coupe peut etre inseree
+            int numeroBloc = new Random().nextInt(blocsPotentiels.size());
+            rand[1] = blocsPotentiels.get(numeroBloc);
+            while (rand[0] == rand[1]) {
+                numeroBloc = new Random().nextInt(blocsPotentiels.size());
+                rand[1] = blocsPotentiels.get(numeroBloc);
+            }
+            bloc[1] = solutionTemporaire.get(rand[1]);
 
             // Ajoute la coupe retiree dans le bloc 1
             // Si echec, replace la coupe dans le bloc 0 et remonte au debut
@@ -124,12 +148,9 @@ public class AmeliorationLocale {
             // Reduction de la solution
             solutionTemporaire.reduire();
 
-            // Si les blocs sont vides, les supprimer
+            // Si le bloc 0 est devenu vide, le supprimer
             if (bloc[0].getCoupes().isEmpty()) {
                 solutionTemporaire.remove(rand[0]);
-            }
-            if (bloc[1].getCoupes().isEmpty()) {
-                solutionTemporaire.remove(rand[1]);
             }
 
             // RAZ du compteur d'echecs
