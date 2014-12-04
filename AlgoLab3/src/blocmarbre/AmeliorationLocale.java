@@ -19,10 +19,12 @@ public class AmeliorationLocale {
      */
     private final Vorace vorace;
 
+    private final Random random;
+
     /**
      * Le nombre maximum d'essais
      */
-    private static final int MAX_ESSAIS = 10;
+    private static final int MAX_ESSAIS = 500;
 
     /**
      *
@@ -32,6 +34,7 @@ public class AmeliorationLocale {
      */
     public AmeliorationLocale(Vorace vorace) {
         this.vorace = vorace;
+        this.random = new Random();
     }
 
     /**
@@ -79,7 +82,7 @@ public class AmeliorationLocale {
         HashSet<Solution> setSolutions = new HashSet<>();
 
         // Initialisation de la solution temporaire
-        Solution solutionTemporaire = solution;
+        Solution solutionBackup, solutionTemporaire = solution;
 
         // Initialisation des blocs variables
         Bloc[] bloc = new Bloc[2];
@@ -92,9 +95,10 @@ public class AmeliorationLocale {
         while (essai < MAX_ESSAIS) {
             // Copie de la derniere solution
             solutionTemporaire = new Solution(solutionTemporaire);
+            solutionBackup = new Solution(solutionTemporaire);
 
             // Recupere un bloc au hasard
-            rand[0] = new Random().nextInt(solutionTemporaire.size());
+            rand[0] = this.random.nextInt(solutionTemporaire.size());
             bloc[0] = solutionTemporaire.get(rand[0]);
 
             // Recupere un numero au hasard
@@ -103,7 +107,7 @@ public class AmeliorationLocale {
                 essai++;
                 continue;
             }
-            int numeroCoupe = new Random().nextInt(bloc[0].getCoupes().size());
+            int numeroCoupe = this.random.nextInt(bloc[0].getCoupes().size());
             int randomCoupe = bloc[0].getCoupes().get(numeroCoupe);
 
             // Retire la coupe du bloc 0
@@ -129,10 +133,10 @@ public class AmeliorationLocale {
                 continue;
             }
             // Recupere un bloc potentiel ou la coupe peut etre inseree
-            int numeroBloc = new Random().nextInt(blocsPotentiels.size());
+            int numeroBloc = this.random.nextInt(blocsPotentiels.size());
             rand[1] = blocsPotentiels.get(numeroBloc);
             while (rand[0] == rand[1]) {
-                numeroBloc = new Random().nextInt(blocsPotentiels.size());
+                numeroBloc = this.random.nextInt(blocsPotentiels.size());
                 rand[1] = blocsPotentiels.get(numeroBloc);
             }
             bloc[1] = solutionTemporaire.get(rand[1]);
@@ -145,12 +149,19 @@ public class AmeliorationLocale {
                 continue;
             }
 
-            // Reduction de la solution
-            solutionTemporaire.reduire();
-
             // Si le bloc 0 est devenu vide, le supprimer
             if (bloc[0].getCoupes().isEmpty()) {
                 solutionTemporaire.remove(rand[0]);
+            }
+
+            // Reduction de la solution
+            solutionTemporaire.reduire();
+
+            // Si la nouvelle solution est moins bonne que l'ancienne, reprendre
+            if (solutionBackup.getPerte() < solutionTemporaire.getPerte()) {
+                solutionTemporaire = solutionBackup;
+                essai++;
+                continue;
             }
 
             // RAZ du compteur d'echecs
