@@ -74,23 +74,20 @@ public class BlocMarbre {
             // Vorace ramdomise
             Vorace vorace = new Vorace(marbre);
             vorace.traiter();
-
             Solution solutionTemporaire = vorace.getSolution();
-            System.out.println("Perte originale : " + solutionTemporaire.getPerte());
 
             // Amelioration locale
             AmeliorationLocale amelioration = new AmeliorationLocale(vorace);
             solutionTemporaire = amelioration.ameliorer(solutionTemporaire);
-            System.out.println("Perte apres voisinage : " + solutionTemporaire.getPerte());
-            // System.out.flush();
             temps.arreter();
 
             if (solutionTemporaire.getPerte() < optimum.getPerte()) {
                 optimum = solutionTemporaire;
                 // afficher(optimum, temps);
-                afficherPropre(optimum, temps);
+                // afficherPropre(optimum, temps);
                 // afficherLongueur(optimum, temps);
-                 afficherPerte(optimum, temps);
+                // afficherPerte(optimum, temps);
+                afficherReduit(optimum, temps);
             }
 
             temps.reset();
@@ -124,6 +121,23 @@ public class BlocMarbre {
             }
             System.out.println();
         }
+        System.out.println();
+    }
+
+    /**
+     *
+     * Affiche la solution reduite.
+     *
+     * @param solution la solution
+     * @param temps    le chrono
+     */
+    public static void afficherReduit(Solution solution, Chrono temps) {
+        // Premiere ligne
+        System.out.print(solution.getPerte());
+        System.out.print(" ");
+        System.out.print(temps.getTemps());
+        System.out.print(" ");
+        System.out.print(solution.size());
         System.out.println();
     }
 

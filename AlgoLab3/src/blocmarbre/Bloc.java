@@ -86,14 +86,16 @@ public class Bloc {
 
     /**
      * Constructeur par deep copy
-     * @param origin
+     *
+     * @param origine
      */
-    public Bloc (Bloc origin) {
-        this(origin.getMarbre(), origin.getNumero(), origin.getCapacite());
-        this.nbCoupesAssignees = origin.getNbCoupesAssignees();
-        this.nbClassesAssignees = origin.getNbClassesAssignees();
-        this.coupes = new ArrayList<>(origin.getCoupes());
-        this.classes = new ArrayList<>(origin.getClasses());
+    public Bloc(Bloc origine) {
+        this(origine.getMarbre(), origine.getNumero(), origine.getCapacite());
+        this.perte = origine.getPerte();
+        this.nbCoupesAssignees = origine.getNbCoupesAssignees();
+        this.nbClassesAssignees = origine.getNbClassesAssignees();
+        this.coupes = new ArrayList<>(origine.getCoupes());
+        this.classes = new ArrayList<>(origine.getClasses());
     }
 
     /**

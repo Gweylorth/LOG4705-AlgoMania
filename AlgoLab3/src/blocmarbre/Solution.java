@@ -11,12 +11,21 @@ import java.util.ArrayList;
  */
 public class Solution extends ArrayList<Bloc> {
 
-    public Solution () {
+    /**
+     * Constructeur vide
+     */
+    public Solution() {
         super();
     }
 
-    public Solution (Solution origin) {
-        for (Bloc bloc : origin) {
+    /**
+     *
+     * Construit une solution a partir d'une solution existante
+     *
+     * @param origine la solution d'origine
+     */
+    public Solution(Solution origine) {
+        for (Bloc bloc : origine) {
             this.add(new Bloc(bloc));
         }
     }
@@ -27,32 +36,28 @@ public class Solution extends ArrayList<Bloc> {
      * @return Entier, perte totale
      */
     public int getPerte() {
+        // Si vide, perte infinie
         if (this.isEmpty()) {
             return Integer.MAX_VALUE;
         }
 
+        // Calcul de la perte
         int perte = 0;
         for (Bloc bloc : this) {
             perte += bloc.getPerte();
         }
+        
+        // Renvoie la perte
         return perte;
     }
 
     /**
-     * Retire la coupe numeroCoupe de tous les blocs de la solution
-     *
-     * @param numeroCoupe Entier, coupe a retirer
-     * @return Booleen, indique si l'operation a pu s'effectuer
+     * Reduit les blocs dans la solution
      */
-    public boolean retraitCoupe(int numeroCoupe) {
-        for (Bloc b : this) {
-            if (!b.getCoupes().contains(numeroCoupe)) {
-                continue;
-            }
-            if (!b.retraitCoupe(numeroCoupe)) {
-                return false;
-            }
+    public void reduire() {
+        for (Bloc bloc : this) {
+            bloc.reduire();
         }
-        return true;
     }
+
 }

@@ -53,7 +53,7 @@ public class Vorace {
         // Initialisation des couts
         ArrayList<Integer> couts = new ArrayList<>();
         // Deep copie des coupes
-        int[][] coupes = copy(marbre.getCoupes());
+        int[][] coupes = copie(marbre.getCoupes());
         // Calcul du cout de chaque coupe
         for (int[] coupe : coupes) {
             couts.add(evaluer(coupe));
@@ -111,26 +111,17 @@ public class Vorace {
         }
 
         // Reduire les blocs
-        reduire();
-    }
-
-    /**
-     * Reduit les blocs dans la solution
-     */
-    private void reduire() {
-        for (Bloc bloc : solution) {
-            bloc.reduire();
-        }
+        solution.reduire();
     }
 
     /**
      *
-     * Copie en deep copy un tableau en 2D
+     * Copie en deep copie un tableau en 2D
      *
      * @param input le tableau a copier
      * @return le tableau copie
      */
-    public int[][] copy(int[][] input) {
+    public int[][] copie(int[][] input) {
         int[][] target = new int[input.length][];
         for (int i = 0; i < input.length; i++) {
             target[i] = Arrays.copyOf(input[i], input[i].length);
@@ -211,7 +202,7 @@ public class Vorace {
      * @return la solution
      */
     public Solution getSolution() {
-        return solution;
+        return new Solution(solution);
     }
 
     /**
@@ -221,7 +212,7 @@ public class Vorace {
      * @param solution la nouvelle solution
      */
     public void setSolution(Solution solution) {
-        this.solution = solution;
+        this.solution = new Solution(solution);
     }
 
 }

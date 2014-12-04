@@ -13,15 +13,24 @@ import java.util.Random;
  */
 public class AmeliorationLocale {
 
+    /**
+     * L'algorithme vorace
+     */
     private final Vorace vorace;
-    private final Random random;
 
+    /**
+     * Le nombre maximum d'essais
+     */
     private static final int MAX_ESSAIS = 10;
 
-    public AmeliorationLocale(Vorace v)
-    {
-        this.vorace = v;
-        this.random = new Random();
+    /**
+     *
+     * Constructeur public de l'objet Amelioration
+     *
+     * @param vorace
+     */
+    public AmeliorationLocale(Vorace vorace) {
+        this.vorace = vorace;
     }
 
     /**
@@ -32,71 +41,105 @@ public class AmeliorationLocale {
      * @return Solution optimale localement
      */
     public Solution ameliorer(Solution solution) {
-        Set<Solution> Vs = voisinage(solution);
-        // System.out.println("Set size : " + Vs.size());
+        // Recuperation de l'ensemble des solutions voisines
+        Set<Solution> voisinage = voisinage(solution);
+        // Critere de comparaison
+        Solution reponse = new Solution(solution);
 
-        for (Solution s : Vs) {
-            System.out.println(s.getPerte());
-            if (s.getPerte() < solution.getPerte()) {
-                solution = s;
-            } else {
-                continue;
+        // Recupere la solution avec le moins de perte
+        for (Solution soluce : voisinage) {
+            if (soluce.getPerte() < reponse.getPerte()) {
+                reponse = soluce;
             }
         }
 
-        return solution;
+        // Renvoie la meilleure solution
+        return reponse;
     }
 
+    /**
+     *
+     * Ameliore la solution vorace.
+     *
+     * @return la solution amelioree
+     */
     public Solution ameliorer() {
         return this.ameliorer(this.vorace.getSolution());
     }
 
     /**
-     * Construit les solutions voisines de la solution s0
+     * Construit l'ensemble des solutions voisines de la solution de depart
      *
-     * @param s0 Solution originale
-     * @return Ensemble des solutions voisines
+     * @param solution la solution originale
+     * @return l'ensemble des solutions voisines
      */
-    private HashSet<Solution> voisinage(Solution s0) {
+    private HashSet<Solution> voisinage(Solution solution) {
         // Ensemble de solutions voisines
-        HashSet<Solution> set = new HashSet<>();
+        HashSet<Solution> setSolutions = new HashSet<>();
 
-        Solution si = s0;
-        Bloc bloc1, bloc2;
+        // Initialisation de la solution temporaire
+        Solution solutionTemporaire = solution;
+
+        // Initialisation des blocs variables
+        Bloc[] bloc = new Bloc[2];
+        int[] rand = new int[2];
+        rand[0] = 0;
+        rand[1] = 0;
 
         // Essais successifs rates
-        int essais = 0;
-        while(essais < MAX_ESSAIS) {
+        int essai = 0;
+        while (essai < MAX_ESSAIS) {
             // Copie de la derniere solution
-            si = new Solution(si);
-            // On prend deux blocs au pif dans cette solution
-            bloc1 = si.get(this.random.nextInt(si.size()));
-            bloc2 = si.get(this.random.nextInt(si.size()));
+            solutionTemporaire = new Solution(solutionTemporaire);
 
-            // On regarde si le bloc a bien au moins une coupe, qu'on recupere
-            if (bloc1.getCoupes().size() <= 0) {
-                essais++;
-                continue;
-            }
-            int randomCoupe = bloc1.getCoupes().get(this.random.nextInt(bloc1.getCoupes().size()));
-
-            // On retire la coupe du bloc. Si ca foire, on laisse tomber cette iteration
-            if (!bloc1.retraitCoupe(randomCoupe)) {
-                essais++;
-                continue;
+            // Tire des nombres random
+            rand[0] = new Random().nextInt(solutionTemporaire.size());
+            rand[1] = new Random().nextInt(solutionTemporaire.size());
+            while (rand[0] == rand[1]) {
+                rand[1] = new Random().nextInt(solutionTemporaire.size());
             }
 
-            // On ajoute la coupe retiree au deuxieme bloc. Si ca foire, on la remet au bloc original et on reitere
-            if (!bloc2.ajoutCoupe(randomCoupe)) {
-                bloc1.ajoutCoupe(randomCoupe);
-                essais++;
+            // Recupere deux blocs differents au hasard
+            bloc[0] = solutionTemporaire.get(rand[0]);
+            bloc[1] = solutionTemporaire.get(rand[1]);
+
+            // Recupere un numero au hasard
+            int randomCoupe = bloc[0].getCoupes().get(new Random().nextInt(bloc[0].getCoupes().size()));
+
+            // Retire la coupe du bloc 0
+            // Si echec, remonte au debut
+            if (!bloc[0].retraitCoupe(randomCoupe)) {
+                essai++;
                 continue;
             }
 
-            // Si tout est ok, on garde cette solution, et on reprend a 0 erreur successive
-            essais = 0;
-            set.add(si);
+            // Ajoute la coupe retiree dans le bloc 1
+            // Si echec, replace la coupe dans le bloc 0 et remonte au debut
+            if (!bloc[1].ajoutCoupe(randomCoupe)) {
+                bloc[0].ajoutCoupe(randomCoupe);
+                essai++;
+                continue;
+            }
+
+            // Reduction de la solution
+            solutionTemporaire.reduire();
+
+            // Si les blocs sont vides, les supprimer
+            if (bloc[0].getCoupes().isEmpty()) {
+                solutionTemporaire.remove(rand[0]);
+            }
+            if (bloc[1].getCoupes().isEmpty()) {
+                solutionTemporaire.remove(rand[1]);
+            }
+
+            // RAZ du compteur d'echecs
+            essai = 0;
+
+            // Ajout de la nouvelle solution a l'ensemble
+            setSolutions.add(solutionTemporaire);
         }
-        return set;
+
+        // Renvoie l'ensemble de solutions
+        return setSolutions;
     }
 }
