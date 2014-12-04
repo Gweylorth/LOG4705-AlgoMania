@@ -70,12 +70,12 @@ public class Vorace {
             // Calcul de la borne
             ArrayList<Integer> RCL = new ArrayList<>();
             double alpha = bornage * randInt(1, 10);
-            int borne = (int) (coutMin + alpha * (coutMax - coutMin));
+            int borne = (int) (coutMax - alpha * (coutMax - coutMin));
 
             // Calcul des meilleures coupes
             for (int i = 0; i < couts.size(); i++) {
                 int cout = couts.get(i);
-                if (cout <= borne && cout > 0) {
+                if (cout >= borne && cout > 0) {
                     RCL.add(i);
                 }
             }

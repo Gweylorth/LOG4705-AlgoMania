@@ -80,17 +80,17 @@ public class BlocMarbre {
 
             // Amelioration locale
             AmeliorationLocale amelioration = new AmeliorationLocale(vorace);
-            solutionTemporaire = amelioration.ameliorer(solutionTemporaire);
+         //   solutionTemporaire = amelioration.ameliorer(solutionTemporaire);
          //   System.out.println("Perte apres voisinage : " + solutionTemporaire.getPerte());
             //   System.out.flush();
             temps.arreter();
 
             if (solutionTemporaire.getPerte() < optimum.getPerte()) {
                 optimum = solutionTemporaire;
-                afficher(optimum, temps);
+                // afficher(optimum, temps);
                 // afficherPropre(optimum, temps);
                 // afficherLongueur(optimum, temps);
-                // afficherPerte(optimum, temps);
+                 afficherPerte(optimum, temps);
             }
 
             temps.reset();
