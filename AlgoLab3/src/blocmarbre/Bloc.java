@@ -94,24 +94,23 @@ public class Bloc {
         }
         // Initialisation des parametres
         int index = numero;
-        int j = 1;
         int difference = 0;
         boolean reduction = false;
 
         // Tant que la perte est superieure a la difference, reduire le bloc
-        while (perte > marbre.getCapaciteBlocs()[index] - marbre.getCapaciteBlocs()[index - j]) {
+        while (perte > marbre.getCapaciteBlocs()[index] - marbre.getCapaciteBlocs()[index - 1]) {
             reduction = true;
-            difference = marbre.getCapaciteBlocs()[index] - marbre.getCapaciteBlocs()[index - j];
-            if (index - j < 1) {
+            difference = marbre.getCapaciteBlocs()[index] - marbre.getCapaciteBlocs()[index - 1];
+            index--;
+            if (index - 1 < 1) {
                 break;
             }
-            j++;
         }
 
         if (reduction) {
             // MAJ des parametres
             perte -= difference;
-            numero = index - j;
+            numero = index;
             capacite = marbre.getCapaciteBlocs()[numero];
         }
     }
