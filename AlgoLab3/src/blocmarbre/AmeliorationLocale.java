@@ -129,6 +129,7 @@ public class AmeliorationLocale {
             }
             // Si aucun bloc potentiel, remonte au debut
             if (blocsPotentiels.isEmpty()) {
+                bloc[0].ajoutCoupe(randomCoupe);
                 essai++;
                 continue;
             }
