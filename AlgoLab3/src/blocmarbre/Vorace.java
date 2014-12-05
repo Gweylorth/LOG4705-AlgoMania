@@ -64,7 +64,7 @@ public class Vorace {
         while (compteur < coupes.length) {
             compteur++;
             // Calcul des bords de la borne
-            int coutMin = minimum(couts);
+            int coutMin = Collections.min(couts);
             int coutMax = Collections.max(couts);
 
             // Calcul de la borne
@@ -127,25 +127,6 @@ public class Vorace {
             cible[i] = Arrays.copyOf(input[i], input[i].length);
         }
         return cible;
-    }
-
-    /**
-     *
-     * Renvoie le minimum positif d'une liste
-     *
-     * @param couts les differents couts
-     * @return le minimum positif
-     */
-    public int minimum(ArrayList<Integer> couts) {
-        int minimum = Collections.max(couts);
-
-        for (int cout : couts) {
-            if (minimum > cout && cout > 0) {
-                minimum = cout;
-            }
-        }
-
-        return minimum;
     }
 
     /**

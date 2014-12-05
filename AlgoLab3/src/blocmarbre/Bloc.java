@@ -6,7 +6,6 @@
 package blocmarbre;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  *
@@ -125,32 +124,38 @@ public class Bloc {
      * @return si la coupe a ete ajoutee au bloc
      */
     public boolean ajoutCoupe(int numeroCoupe) {
-
+        // Recupere la longueur et la classe de la coupe
         Integer longueurCoupe = this.marbre.getCoupes()[numeroCoupe][0];
         Integer classeCoupe = this.marbre.getCoupes()[numeroCoupe][1];
 
+        // Si la coupe ne peut pas etre ajoutee, abandonner
         if (this.classes.size() >= nbClassesMax || longueurCoupe > this.perte) {
             return false;
         }
 
+        // Mise a jour du bloc
         this.perte -= longueurCoupe;
         this.coupes.add(numeroCoupe);
-
+        // Mettre a jour les classes
         if (!classes.contains(classeCoupe)) {
             classes.add(classeCoupe);
         }
 
+        // Renvoie que l'ajout s'est bien effectue
         return true;
     }
 
     public boolean retraitCoupe(Integer numeroCoupe) {
-        if (this.coupes.size() == 0 || !this.coupes.contains(numeroCoupe)) {
+        // Si la coupe n'est pas presente dans le bloc, abandonner
+        if (this.coupes.isEmpty() || !this.coupes.contains(numeroCoupe)) {
             return false;
         }
 
+        // Recupere la longueur et la classe de la coupe
         Integer longueurCoupe = this.marbre.getCoupes()[numeroCoupe][0];
         Integer classeCoupe = this.marbre.getCoupes()[numeroCoupe][1];
 
+        // Mise a jour du bloc
         this.perte += longueurCoupe;
         this.coupes.remove(numeroCoupe);
 
@@ -167,6 +172,7 @@ public class Bloc {
             this.classes.remove(classeCoupe);
         }
 
+        // Renvoie que le retrait s'est bien effectue
         return true;
     }
 

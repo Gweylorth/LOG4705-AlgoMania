@@ -46,7 +46,7 @@ public class Solution extends ArrayList<Bloc> {
         for (Bloc bloc : this) {
             perte += bloc.getPerte();
         }
-        
+
         // Renvoie la perte
         return perte;
     }

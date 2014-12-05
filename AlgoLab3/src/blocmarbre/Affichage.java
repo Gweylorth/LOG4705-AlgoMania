@@ -14,6 +14,7 @@ package blocmarbre;
  * @version 1.0
  */
 public class Affichage {
+
     /**
      *
      * Affiche la solution suivant la maniere demandee.
@@ -37,6 +38,8 @@ public class Affichage {
                 afficherReduit(solution, temps);
                 break;
             case Correct:
+                afficherCorrect(solution, temps);
+                break;
             default:
                 afficherCorrect(solution, temps);
                 break;
