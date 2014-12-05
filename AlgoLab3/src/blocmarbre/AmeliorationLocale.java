@@ -24,7 +24,7 @@ public class AmeliorationLocale {
     /**
      * Le nombre maximum d'essais
      */
-    private static final int MAX_ESSAIS = 500;
+    private static final int MAX_ESSAIS = 10;
 
     /**
      *
@@ -108,7 +108,7 @@ public class AmeliorationLocale {
                 continue;
             }
             int numeroCoupe = this.random.nextInt(bloc[0].getCoupes().size());
-            int randomCoupe = bloc[0].getCoupes().get(numeroCoupe);
+            Integer randomCoupe = bloc[0].getCoupes().get(numeroCoupe);
 
             // Retire la coupe du bloc 0
             // Si echec, remonte au debut
