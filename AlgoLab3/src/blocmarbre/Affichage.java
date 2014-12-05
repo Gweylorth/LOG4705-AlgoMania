@@ -14,7 +14,6 @@ package blocmarbre;
  * @version 1.0
  */
 public class Affichage {
-
     /**
      *
      * Affiche la solution suivant la maniere demandee.
@@ -23,20 +22,21 @@ public class Affichage {
      * @param temps    le chrono
      * @param champ    la maniere d'afficher
      */
-    public static void afficher(Solution solution, Chrono temps, String champ) {
+    public static void afficher(Solution solution, Chrono temps, TypeAffichage champ) {
         switch (champ) {
-            case "Propre":
+            case Propre:
                 afficherPropre(solution, temps);
                 break;
-            case "Longueur":
+            case Longueur:
                 afficherLongueur(solution, temps);
                 break;
-            case "Perte":
+            case Perte:
                 afficherPerte(solution, temps);
                 break;
-            case "Reduit":
+            case Reduit:
                 afficherReduit(solution, temps);
                 break;
+            case Correct:
             default:
                 afficherCorrect(solution, temps);
                 break;

@@ -84,7 +84,7 @@ public class BlocMarbre {
 
             if (solutionTemporaire.getPerte() < optimum.getPerte()) {
                 optimum = solutionTemporaire;
-                afficher(optimum, temps, "Reduit");
+                afficher(optimum, temps, TypeAffichage.Correct);
             }
 
             temps.reset();
