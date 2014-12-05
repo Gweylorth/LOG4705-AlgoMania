@@ -78,8 +78,8 @@ public class BlocMarbre {
             Solution solutionTemporaire = vorace.getSolution();
 
             // Amelioration local
-            //AmeliorationLocale amelioration = new AmeliorationLocale(vorace);
-            //solutionTemporaire = amelioration.ameliorer(solutionTemporaire);
+            AmeliorationLocale amelioration = new AmeliorationLocale(vorace);
+            solutionTemporaire = amelioration.ameliorer(solutionTemporaire);
             temps.arreter();
 
             if (solutionTemporaire.getPerte() < optimum.getPerte()) {
