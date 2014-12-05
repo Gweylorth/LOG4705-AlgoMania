@@ -90,13 +90,18 @@ public class Bloc {
      * Reduit la taille du bloc si possible
      */
     public void reduire() {
+        if (numero == 0) {
+            return;
+        }
         // Initialisation des parametres
         int index = numero;
-        int j = 0;
+        int j = 1;
         int difference = 0;
+        boolean reduction = false;
 
         // Tant que la perte est superieure a la difference, reduire le bloc
         while (perte > marbre.getCapaciteBlocs()[index] - marbre.getCapaciteBlocs()[index - j]) {
+            reduction = true;
             difference = marbre.getCapaciteBlocs()[index] - marbre.getCapaciteBlocs()[index - j];
             if (index - j < 1) {
                 break;
@@ -104,10 +109,12 @@ public class Bloc {
             j++;
         }
 
-        // MAJ des parametres
-        perte -= difference;
-        numero = index - j;
-        capacite = marbre.getCapaciteBlocs()[numero];
+        if (reduction) {
+            // MAJ des parametres
+            perte -= difference;
+            numero = index - j;
+            capacite = marbre.getCapaciteBlocs()[numero];
+        }
     }
 
     /**
@@ -252,7 +259,6 @@ public class Bloc {
     public int getNbCoupesAssignees() {
         return this.coupes.size();
     }
-
 
     /**
      *
