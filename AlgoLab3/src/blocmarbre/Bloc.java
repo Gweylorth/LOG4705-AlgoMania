@@ -101,6 +101,7 @@ public class Bloc {
         while (perte > marbre.getCapaciteBlocs()[index] - marbre.getCapaciteBlocs()[index - 1]) {
             reduction = true;
             difference = marbre.getCapaciteBlocs()[index] - marbre.getCapaciteBlocs()[index - 1];
+            perte -= difference;
             index--;
             if (index - 1 < 1) {
                 break;
@@ -109,7 +110,6 @@ public class Bloc {
 
         if (reduction) {
             // MAJ des parametres
-            perte -= difference;
             numero = index;
             capacite = marbre.getCapaciteBlocs()[numero];
         }
