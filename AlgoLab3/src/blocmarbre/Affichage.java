@@ -8,7 +8,7 @@ package blocmarbre;
 /**
  *
  * Affichage est la classe contenant toutes les fonctions d'affichage de
- * solutions
+ * solutions.
  *
  * @author Eric
  * @version 1.0

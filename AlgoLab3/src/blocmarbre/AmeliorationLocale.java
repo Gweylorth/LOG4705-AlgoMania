@@ -15,10 +15,8 @@ import java.util.Random;
 public class AmeliorationLocale {
 
     /**
-     * L'algorithme vorace
+     * Un objet Random pour generer des nombres aleatoires
      */
-    private final Vorace vorace;
-
     private final Random random;
 
     /**
@@ -30,10 +28,8 @@ public class AmeliorationLocale {
      *
      * Constructeur public de l'objet Amelioration
      *
-     * @param vorace
      */
-    public AmeliorationLocale(Vorace vorace) {
-        this.vorace = vorace;
+    public AmeliorationLocale() {
         this.random = new Random();
     }
 

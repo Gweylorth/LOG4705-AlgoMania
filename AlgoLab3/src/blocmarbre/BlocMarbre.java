@@ -10,6 +10,8 @@ import static blocmarbre.Affichage.*;
 
 /**
  *
+ * Main du programme d'optimisation pour le TP3
+ *
  * @author Eric
  * @version 1.0
  */
@@ -23,7 +25,7 @@ public class BlocMarbre {
      */
     public static void main(String[] args) throws FileNotFoundException {
         // Recuperation des arguments
-        if (args.length < 3) {
+        if (args.length < 2) {
             System.out.println("Not enough args.");
             return;
         }
@@ -38,18 +40,6 @@ public class BlocMarbre {
         // Chemin vers le fichier
         String chemin = args[i + 1];
 
-        boolean print = false;
-        int j = 0;
-        while (!"-p".equals(args[j])) {
-            j++;
-            if (j >= args.length) {
-                break;
-            }
-        }
-        if (j < args.length) {
-            print = true;
-        }
-
         // Creation du marbre
         Marbre marbre = new Marbre();
 
@@ -62,7 +52,7 @@ public class BlocMarbre {
 
     /**
      *
-     * Resout le probleme d'optimisation
+     * Resout le probleme d'optimisation.
      *
      * @param marbre l'ensemble de donnees
      */
@@ -77,11 +67,12 @@ public class BlocMarbre {
             vorace.traiter();
             Solution solutionTemporaire = vorace.getSolution();
 
-            // Amelioration local
-            AmeliorationLocale amelioration = new AmeliorationLocale(vorace);
-         //   solutionTemporaire = amelioration.ameliorer(solutionTemporaire);
+            // Amelioration locale
+            AmeliorationLocale amelioration = new AmeliorationLocale();
+            solutionTemporaire = amelioration.ameliorer(solutionTemporaire);
             temps.arreter();
 
+            // Recupere la nouvelle solution si elle est meilleure
             if (solutionTemporaire.getPerte() < optimum.getPerte()) {
                 optimum = solutionTemporaire;
                 afficher(optimum, temps, TypeAffichage.Correct);

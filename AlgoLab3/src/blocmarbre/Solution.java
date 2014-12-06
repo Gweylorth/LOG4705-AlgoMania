@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * Classe Solution, une ArrayList de Blocs proposant des methodes
- * supplementaires
+ * supplementaires.
  *
  * @author Gwenegan
  * @version 1.0

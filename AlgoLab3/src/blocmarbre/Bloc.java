@@ -76,7 +76,7 @@ public class Bloc {
     /**
      * Constructeur par deep copy
      *
-     * @param origine
+     * @param origine le bloc d'origine
      */
     public Bloc(Bloc origine) {
         this(origine.getMarbre(), origine.getNumero(), origine.getCapacite());
@@ -94,7 +94,7 @@ public class Bloc {
         }
         // Initialisation des parametres
         int index = numero;
-        int difference = 0;
+        int difference;
         boolean reduction = false;
 
         // Tant que la perte est superieure a la difference, reduire le bloc
@@ -144,6 +144,13 @@ public class Bloc {
         return true;
     }
 
+    /**
+     *
+     * Retire une coupe au bloc.
+     *
+     * @param numeroCoupe le numero de la coupe
+     * @return si la coupe a ete retiree au bloc
+     */
     public boolean retraitCoupe(Integer numeroCoupe) {
         // Si la coupe n'est pas presente dans le bloc, abandonner
         if (this.coupes.isEmpty() || !this.coupes.contains(numeroCoupe)) {
