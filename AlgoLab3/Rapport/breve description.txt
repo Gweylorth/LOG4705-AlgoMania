@@ -1,0 +1,5 @@
+Le présent rapport documente les procédures utilisées lors du troisième laboratoire du cours INF4705 Analyse et Conception d'algorithmes.
+
+Le laboratoire consiste à implémenter un algorithme d’optimisation afin de résoudre un problème combinatoire. Il faut minimiser les pertes liées à l’affectation des coupes dans les blocs de marbre. Le choix de l’algorithme était laissé au choix mais il a été décidé d’utiliser un algorithme vorace randomisé avec amélioration locale.
+
+Les sections suivantes présentes l’algorithme implanté et son analyse ainsi que l’originalité de celui-ci.
