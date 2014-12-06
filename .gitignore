@@ -60,7 +60,7 @@ hs_err_pid*
 
 # LaTeX files
 *.synctex.gz
-*.pdf
+#*.pdf
 *.aux
 *.log
 *.toc

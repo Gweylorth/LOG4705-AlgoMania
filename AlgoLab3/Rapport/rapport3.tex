@@ -70,7 +70,7 @@
 		\begin{minipage}{0.49\textwidth}
 			\begin{flushleft} \LARGE
 				\textbf{Auteur}\\
-				Eric \textsc{Ah-Tiane}\\ ID\\
+				Eric \textsc{Ah-Tiane}\\ 1760376\\
 				Gwenegan \textsc{Hudin}\\ 1756642\\[0.5cm]
 			\end{flushleft}
 		\end{minipage}
@@ -95,9 +95,15 @@
 
 \section{Introduction}
 
-\subsection{Sujet de l'expérience}
+Le présent rapport documente les procédures utilisées lors du troisième laboratoire du cours INF4705 Analyse et Conception d'algorithmes.
 
-\subsection{Objectifs}
+Le laboratoire consiste à implémenter un algorithme d’optimisation afin de résoudre un problème combinatoire. Il faut minimiser les pertes liées à l’affectation des coupes dans les blocs de marbre. Nous avons donc un immense espace de solutions potentielles à explorer, parmi lesquelles de solutions optimales locales et une solution optimale globale.
+
+Le choix de l’algorithme était laissé au choix mais il a été décidé d’utiliser un algorithme vorace randomisé avec amélioration locale. Cette méthode permet de déterminer rapidement plusieurs solutions optimales locales. Parmi celles-ci, il est possible, au bout d'un nombre d'essais assez grand, de trouver l'optimum global de l'espace de solutions.
+
+Les sections suivantes présentes l’algorithme implanté et son analyse ainsi que l’originalité de celui-ci. Cet algorithme sera en compétition avec ceux des autres groupes du cours, et se verra attribuer seulement 3 minutes pour trouver la meilleure solution possible, après quoi son fonctionnement sera interrompu. Le temps d'exécution est donc important.
+
+Des ensembles de données nous sont fournies avec 2, 3, 4, 5 ou 9 catégories de blocs.
 
 \newpage
 
@@ -196,11 +202,28 @@ Cet algorithme s'arrête lorsqu'il échoue un certain nombre de fois à la suite
 \caption{Pseudo-code de la méthode d'amélioration locale 1-opt}
 \end{figure}
 
+\subsection{Analyse de complexité}
+
+Soient $n$ le nombre de coupes disponibles et $c$ le nombre de capacités disponibles.
+La complexité de la fonction de calcul vorace est déterminée par la complexité de la fonction de réduction de la solution $reduire()$.
+Comme sa complexité est de $\theta(n \times c)$, la complexité de calcul vorace est aussi de $\theta(n \times c)$.
+
+La complexité de la fonction d'amélioration locale est plus difficile à déterminer. En effet, sa complexité dépend de la taille de l'ensemble des solutions voisines.
+Pour calculer une solution voisine, la complexité est à nouveau déterminée par $reduire()$. Donc la complexité pour calculer une solution voisine est de $\theta(n \times c)$.
+Toutefois, le nombre de solutions voisines possibles est inconnu. L'algorithme d'amélioration locale possède donc une complexité dépendant de la taille de l'ensemble des solutions voisines et de $\theta(n \times c)$.
+
 \subsection{Originalité}
 
-\section{Résultats \& Tests}
+Notre méthode est classique et ne présente pas d'originalité particulière. Notons que la recherche de voisinage dans l'algorithme d'amélioration locale force la descente le long de la pente, et ne monte jamais. Cela coupe une partie de l'espace de solution qu'il pourrait sembler intéressant d'explorer. Cependant, nous avons essayé les deux méthodes, et forcer la descente permettait d'obtenir de meilleurs résultats bien plus rapidement.
+
+Nous avons aussi exploré les possibilités d'utiliser une amélioration 2-opt, en échangeant à chaque fois 2 coupes au lieu d'une. Là aussi, les résultats étaient moins probants, et le temps d'exécution augmentait beaucoup trop (3 fois plus de temps pour trouver une solution équivalente au 1-opt). Il a donc été abandonné.
 
 \section{Conclusion}
 
+L'algorithme a subi de nombreuses corrections itératives lorsque nous avons pu utiliser le vérificateur de solutions, que nous avons confrontés à nos solutions sur les exemples 2\_0, 2\_9, 4\_8, 5\_3, 9\_1 et 9\_9.
+
+Nos solutions, à l'heure du rendu, ont toutes été validées par ce programme, et nous pensons donc avoir couvert toutes les possibilités.
+
+Que le meilleur gagne !
 
 \end{document}
