@@ -112,7 +112,7 @@ Des ensembles de données nous sont fournies avec 2, 3, 4, 5 ou 9 catégories de
 \subsection{Fonctionnement et pseudo-code}
 
 Lors de notre remue-méninges initial, nous avons considéré l'utilisation de la programmation par contraintes, particulièrement adaptée pour résoudre les problèmes combinatoires. Nous voulions utiliser le cadriciel Choco avec Java.
-Cependant, la programmation par contraintes sort de l'objectif de ce cours, et nous nous sommes donc rabattus sur la solution préconisée avec les outils à notre disposition. Nous avons implémenté en Java un algorithme vorace randomisé, avec une heuristique d'amélioration locale, et répétons ces opérations pour trouver différents optimums locaux. De ces optimums, nous gardons le meilleur, qui peut être l'optimum global (mais ce n'est pas garanti). Voir Figure 2.
+Cependant, la programmation par contraintes sort de l'objectif de ce cours, et nous nous sommes donc rabattus sur la solution préconisée avec les outils à notre disposition. Nous avons implémenté en Java un algorithme vorace randomisé, avec une heuristique d'amélioration locale, et répétons ces opérations pour trouver différents optima locaux. De ces optima, nous gardons le meilleur, qui peut être l'optimum global (mais ce n'est pas garanti). Voir Figure 2.
 
 \begin{figure}[h!]
 \begin{algorithmic}
@@ -217,6 +217,8 @@ Toutefois, le nombre de solutions voisines possibles est inconnu. L'algorithme d
 Notre méthode est classique et ne présente pas d'originalité particulière. Notons que la recherche de voisinage dans l'algorithme d'amélioration locale force la descente le long de la pente, et ne monte jamais. Cela coupe une partie de l'espace de solution qu'il pourrait sembler intéressant d'explorer. Cependant, nous avons essayé les deux méthodes, et forcer la descente permettait d'obtenir de meilleurs résultats bien plus rapidement.
 
 Nous avons aussi exploré les possibilités d'utiliser une amélioration 2-opt, en échangeant à chaque fois 2 coupes au lieu d'une. Là aussi, les résultats étaient moins probants, et le temps d'exécution augmentait beaucoup trop (3 fois plus de temps pour trouver une solution équivalente au 1-opt). Il a donc été abandonné.
+
+\newpage
 
 \section{Conclusion}
 
