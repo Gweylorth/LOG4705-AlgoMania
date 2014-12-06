@@ -15,6 +15,7 @@
 \usepackage{tocloft}
 \usepackage{fixltx2e}
 \usepackage{color}
+\usepackage{algpseudocode}
 \usepackage[colorlinks=true,
 			linkcolor=blue,
 			bookmarksnumbered=true,
@@ -94,27 +95,112 @@
 
 \section{Introduction}
 
-\section{Revue de la théorie}
+\subsection{Sujet de l'expérience}
 
-\subsection{Problème combinatoire}
+\subsection{Objectifs}
 
-\subsection{Fonctionnement de l'algorithme vorace}
+\newpage
 
-\subsection{Recherche d'optimum local}
+\section{Présentation de l'algorithme}
 
-\section{Protocole expérimental}
+\subsection{Fonctionnement et pseudo-code}
 
-\subsection{Environnement de développement}
+Lors de notre remue-méninges initial, nous avons considéré l'utilisation de la programmation par contraintes, particulièrement adaptée pour résoudre les problèmes combinatoires. Nous voulions utiliser le cadriciel Choco avec Java.
+Cependant, la programmation par contraintes sort de l'objectif de ce cours, et nous nous sommes donc rabattus sur la solution préconisée avec les outils à notre disposition. Nous avons implémenté en Java un algorithme vorace randomisé, avec une heuristique d'amélioration locale, et répétons ces opérations pour trouver différents optimums locaux. De ces optimums, nous gardons le meilleur, qui peut être l'optimum global (mais ce n'est pas garanti). Voir Figure 2.
 
-\subsection{Approche choisie}
+\begin{figure}[h!]
+\begin{algorithmic}
 
-\section{Résultats}
+\Function{ResoudreProbleme}{P}
+	\State $s_{opt}\gets \{\}$
+	\State $p \gets \infty$
+	
+	\While{true}
+		\State $s \gets $ \Call{voraceRandomise}{P, $\alpha$}
+		\State $s \gets $ \Call{ameliorationLocale}{$s$}
+		\If{\Call{Perte}{$s_{opt}$} < \Call{Perte}{$s$} }
+			\State $s_{opt}\gets s$
+			\State \Call{afficher}{s}
+		\EndIf
+	\EndWhile
+\EndFunction
 
-\subsection{Discussion}
+\end{algorithmic}
+\caption{Pseudo-code de l'algorithme global}
+\end{figure}
+
+Un vorace non randomisé obtiendrait toujours la même solution, et amènerait donc toujours au même optimum local, qui n'est probablement pas l'optimum global du premier coup.
+On introduit donc un certain degré d'aléatoire en ne prenant non pas toujours la meilleure solution disponible, mais une des meilleures solutions disponibles, avec un intervalle généré par $ \alpha $. On obtient ainsi une liste réduite de candidats parmi lesquels on choisit aléatoirement. Voir Figure 3.
+
+\newpage
+
+\begin{figure}[h!]
+\begin{algorithmic}
+\Function{voraceRandomise}{P, $\alpha$}
+	\State $s \gets \{\}$
+	\State $couts \gets \{\}$
+	\State $coupes \gets $ \Call{initialiserCandidats}{P}
+	
+	\ForAll{$c \in coupes$}
+		\State $couts[c] \gets $ \Call{evaluer}{c}
+	\EndFor
+	
+	\ForAll{$c \in coupes$}
+		\State $min \gets $ \Call{minimum}{couts}
+		\State $max \gets $ \Call{maximum}{couts}
+		\State $RCL \gets \{\}$
+		\State $borne \gets max - \alpha \times (max - min) $
+		\State $RCL \gets \{c \in coupes \mid cout[coupe] \leq borne\} $
+		\State $e^{*} \gets $ \Call{random}{RCL}
+		\State \Call{ajouter}{$e^{*}$, s}
+		\State \Call{miseAJour}{coupes}
+		\State \Call{miseAJour}{couts}
+	\EndFor	
+	\State \Return s
+\EndFunction
+
+\end{algorithmic}
+\caption{Pseudo-code de la méthode vorace randomisée}
+\end{figure}
+
+Une fois que l'on a une solution vorace, on l'améliore localement par la méthode de descente de pente 1-opt. Cet algorithme intervertit une assignation de coupe aléatoirement au sein de la solution, et si elle est meilleure que la solution originale, alors il la garde et essaie à nouveau.
+Cet algorithme s'arrête lorsqu'il échoue un certain nombre de fois à la suite, ce qui indique qu'il n'a probablement plus aucun échange intéressant à réaliser, et donc qu'il a atteint l'optimum local. Ce nombre a été fixé à 30 empiriquement dans notre programme. Voir Figure 4.
+
+\newpage
+
+\begin{figure}[h!]
+\begin{algorithmic}
+
+\Function{ameliorationLocale}{$s_{0}$}
+	\State $s_{opt} \gets \{\}$
+	
+	\While{$essais < essais_{max}$}	
+		\State $ bloc1 \gets $ \Call{random}{$s_{0}$}
+		\State $ coupe \gets $ \Call{random}{bloc1[coupes]}
+		\State $ recepteurs \gets \{bloc \in s_{0} \mid perte[bloc] \geq coupe\}$
+		\State $ bloc2 \gets $ \Call{random}{$recepteurs$}  \Comment{$bloc2 \neq bloc1$}
+		\State \Call{transfererCoupe}{bloc1, bloc2}
+		\State $s_{opt} \gets $ \Call{remplacer}{$s_{0}$, bloc1, bloc2}
+		\State \Call{reduire}{$s_{opt}$}
+		\If{erreur ou \Call{vide}{recepteurs} ou \Call{Perte}{$s_{opt}$} > \Call{Perte}{$s_{0}$}}
+			\State essais++
+		\Else
+			\State $essais \gets 0$
+			\State $s_{0} \gets s_{opt}$
+		\EndIf
+	\EndWhile
+	\State \Return $s_{opt}$
+\EndFunction
+
+\end{algorithmic}
+\caption{Pseudo-code de la méthode d'amélioration locale 1-opt}
+\end{figure}
+
+\subsection{Originalité}
+
+\section{Résultats \& Tests}
 
 \section{Conclusion}
-
-\section{Bibliographie}
 
 
 \end{document}
